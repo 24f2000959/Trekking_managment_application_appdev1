@@ -106,6 +106,351 @@ def login():
 
 
 
+# ===================================================admin=================================================================
+@app.route("/admin/admin_dashboard")
+def admin_dashboard():
+    if "user_id" not in session:
+        flash("login first!")
+        return redirect("/login_page")
+    
+    if session.get("role") != "admin":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    user_id = session.get("user_id")
+    this_user = User.query.filter_by(id=user_id).first()
+
+    if this_user is None:
+        session.clear()
+        flash("please login again")
+        return redirect("/login_page")
+    
+    total_treks = Trek.query.count()
+    total_users = User.query.filter_by(role="user").count()
+    total_staff = User.query.filter_by(role="staff").count()
+    pending_staff = User.query.filter_by(role="staff",status="pending").count()
+    total_bookings = Booking.query.count()
+
+    return render_template("admin/admin_dashboard.html",this_user=this_user,
+                            total_treks=total_treks, 
+                            total_users = total_users,
+                            total_staff = total_staff,
+                            pending_staff=pending_staff,
+                            total_bookings=total_bookings)
+
+
+#bookingsXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+@app.route("/admin/bookings_page")
+def bookings_page():
+    if "user_id" not in session:
+        flash("login first")
+        return redirect("/login_page")
+    
+    if session.get("role") != "admin":
+        flash("Unauthoried Access")
+        return redirect("/login_page")
+
+    this_user = User.query.filter_by(id=session.get("user_id"),role="admin").first()
+    if this_user is None:
+        flash("please login again ")
+        return redirect("/login_page")
+    
+    bookings=Booking.query.all()
+
+    return render_template("/admin/bookings_page.html", bookings=bookings)
+#treksXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+@app.route("/admin/treks_page")
+def treks_page():
+
+    if "user_id" not in session:
+        flash("login first!")
+        return redirect("/login_page")
+    
+    if session.get("role") != "admin":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    this_user = User.query.filter_by(id=session.get("user_id")).first()
+    if this_user is None:
+        session.clear()
+        flash("please login again")
+        return redirect("/login_page")
+    
+    treks=Trek.query.all()
+    return render_template("/admin/treks_page.html", treks=treks, this_user=this_user)
+
+# add trek
+@app.route("/admin/add_trek",methods=["GET","POST"])
+def add_trek():
+    #authentication
+    if "user_id" not in session:
+        flash("first login")
+        return redirect("/login_page")
+    
+    if session.get("role") != "admin":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    this_user = User.query.filter_by(id=session.get("user_id")).first()
+    if this_user is None:
+        session.clear()
+        flash("please login agian")
+        return redirect("/login_page")
+
+    if request.method =="POST":
+        trek_name = request.form.get("trek_name")
+        location = request.form.get("location")
+        difficulty = request.form.get("difficulty")
+        duration = request.form.get("duration")
+        total_slots = request.form.get("total_slots")
+        start_date = request.form.get("start_date")
+        end_date = request.form.get("end_date")
+        staff_id = request.form.get("staff_id")
+        description = request.form.get("description")
+        status = request.form.get("status")
+
+        #validation
+        if not trek_name or not location or not difficulty or not duration or  not total_slots or not start_date or not end_date or not description or not status or not staff_id:
+            flash("fill all fields")
+            return redirect("/admin/add_trek")
+        
+        existing_staff = Trek.query.filter_by(staff_id=staff_id,status="open").first()
+        if existing_staff:
+            flash("staff is already assigned to another trek")
+            return redirect("/admin/add_trek")
+        
+        existing_trek = Trek.query.filter_by(trek_name=trek_name,start_date=start_date).first()
+        if existing_trek:
+            flash("A trek with the same name and start date already exists.")
+            return redirect("/admin/add_trek")
+        
+        if int(total_slots) <= 0:
+            flash("total slots must be greater than 0")
+            return redirect("/admin/add_trek")
+        
+        start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+        end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+        if start_date >= end_date:
+            flash("startdate should be less than enddate")
+            return redirect("/admin/add_trek")
+        
+        new_trek = Trek(
+                trek_name=trek_name,
+                location=location,
+                difficulty=difficulty,
+                duration=int(duration),
+                total_slots=int(total_slots),
+                available_slots=int(total_slots),
+                start_date=start_date,
+                end_date=end_date,
+                description=description,
+                status=status,
+                staff_id=staff_id
+
+            )
+        db.session.add(new_trek)
+        db.session.commit()
+        return redirect("/admin/treks_page")
+    
+    staffs = User.query.filter_by(role="staff",status="approve").all()
+    return render_template("/admin/add_trek.html",staffs=staffs)
+    
+
+
+#edit trek
+@app.route("/admin/edit_trek/<int:trek_id>", methods=["GET","POST"])
+def edit_trek(trek_id):
+    
+    if "user_id" not in session:
+        flash("Login first")
+        return redirect("/login_page")
+    
+    if session.get("role") != "admin":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    this_user = User.query.filter_by(role="admin",id=session.get("user_id")).first()
+    if this_user is None:
+        session.clear()
+        flash("please login first")
+        return redirect("/login_page")
+    
+    treks = Trek.query.filter_by(id=trek_id).first()
+    if treks is None:
+        flash("trek not find")
+        return redirect("/admin/treks_page")
+    
+    staff = User.query.filter_by(role="staff",status="approve").all()
+    
+    if request.method == "POST":
+        treks.trek_name = request.form.get("trek_name")
+        treks.location = request.form.get("location")
+        treks.difficulty = request.form.get("difficulty")
+        treks.duration = request.form.get("duration")
+        treks.total_slots = request.form.get("total_slots")
+        treks.start_date = datetime.strptime(request.form.get("start_date"),"%Y-%m-%d").date()
+        treks.end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d").date()
+        treks.staff_id = request.form.get("staff_id")
+        treks.description = request.form.get("description")
+        treks.status = request.form.get("status")
+
+        db.session.commit()
+        flash("edit successfull")
+        return redirect("/admin/treks_page")
+    
+    staffs = User.query.filter_by(role="staff",status="approve").all()
+    return render_template("/admin/edit_trek.html",staffs=staffs,treks=treks)
+
+#delete trek
+@app.route("/admin/delete_trek/<int:trek_id>")
+def delete_edit(trek_id):
+    if "user_id" not in session:
+        flash("login first")
+        return redirect("/login_page")
+    
+    if session.get("role") != "admin":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    this_user = User.query.filter_by(role="admin", id=session.get("user_id")).first()
+    if this_user is None:
+        session.clear()
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    trek = Trek.query.filter_by(id=trek_id).first()
+    if trek is None:
+        flash("trek not found")
+        return redirect("/admin/treks_page")
+    
+    db.session.delete(trek)
+    db.session.commit()
+    flash("trek deleted successfully")
+
+    return redirect("/admin/treks_page")
+
+
+#staffXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+@app.route("/admin/staff_page")
+def staff_page():
+    if "user_id" not in session:
+        flash("login first")
+        return redirect("/login_page")
+    
+    if session.get("role") != "admin":
+        flash("Unauthorized Access!")
+        return redirect("/login_page")
+    
+    this_user = User.query.filter_by(id=session.get("user_id")).first()
+    if this_user is None:
+        session.clear()
+        flash("please login again")
+        return redirect("/login_page")
+    
+    staffs = User.query.filter_by(role="staff").all()
+    return render_template("/admin/staff_page.html", staffs=staffs, this_user=this_user)
+
+
+# approve staff
+@app.route("/admin/approve_staff/<int:staff_id>")
+def approve_staff(staff_id):
+    if "user_id" not in session:
+        flash("first login")
+        return redirect("/login_page")
+
+    if session.get("role") != "admin":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+
+    staff = User.query.filter_by(id=staff_id,role="staff").first()
+    if staff is None:
+       return redirect("/admin/staff_page")
+
+    if staff:
+        staff.status = "approve"
+        db.session.commit()
+    return redirect("/admin/staff_page")
+
+
+# balcklist staff
+@app.route("/admin/blacklist_staff/<int:staff_id>")
+def blacklist_staff(staff_id):
+    if "user_id" not in session:
+        flash("login first")
+        return redirect("/login_page")
+    
+    if session.get("role") != "admin":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    staff=User.query.filter_by(id=staff_id,role="staff").first()
+    if staff is None:
+        return redirect("/admin/staff_page")
+    if staff:
+        staff.status = "blacklist"
+        db.session.commit()
+    return redirect("/admin/staff_page")
+
+
+
+# userXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+@app.route("/admin/user_page")
+def user_page():
+    if "user_id" not in session:
+        flash("login first")
+        return redirect("/login_page")
+    if session.get("role") != "admin":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    this_user = User.query.filter_by(id=session.get("user_id")).first()
+    if this_user is None:
+        session.clear()
+        flash("please login again")
+        return redirect("/login_page")
+    
+    users = User.query.filter_by(role="user").all()
+    return render_template("/admin/user_page.html",users=users, this_user=this_user)
+
+
+#approve user
+@app.route("/admin/approve_user/<int:user_id>")
+def approve_user(user_id):
+    if "user_id" not in session:
+        flash("first login")
+        return redirect("/login_page")
+    
+    if session.get("role") != "admin":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    user = User.query.filter_by(id=user_id,role="user").first()
+    if user is None:
+        return redirect("/admin/user_page")
+    if user:
+        user.status = "approve"
+        db.session.commit()
+    return redirect("/admin/user_page")
+
+#blacklist user
+@app.route("/admin/blacklist_user/<int:user_id>")
+def blacklist_user(user_id):
+    if "user_id" not in session:
+        flash("first login")
+        return redirect("/login_page")
+    
+    if session.get("role") != "admin":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    user = User.query.filter_by(id=user_id,role="user").first()
+    if user is None:
+        return redirect("/admin/user_page")
+    if user:
+        user.status = "blacklist"
+        db.session.commit()
+    return redirect("/admin/user_page")
+
+
 
 # ===================================================logout=================================================================
 @app.route("/logout")

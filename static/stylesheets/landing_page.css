@@ -1,0 +1,241 @@
+*{
+    margin : 0px;
+}
+body{
+    background: #EAF4F1;
+}
+
+ 
+#canvas{
+    min-height: 100vh;
+    background:#EAF4F1;
+
+}
+/*------------------------------------------------header-------------------------------------------------------------------- */
+
+#header{
+    display: flex;
+    justify-content: center;
+    background: #1E3A34;
+
+}
+
+#navebar{
+    width: 100%;
+    height: 50px;
+    padding : 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1E3A34;
+}
+#header #navebar .logo{
+    display: flex;
+    background: #1E3A34;
+}
+
+
+#header #navebar .logo .logotext{
+    color: #EAF4F1;
+    background: #1E3A34;
+    font-size:20px;
+}
+#header #navebar .logo .logotext h1{
+    padding: 0px 10px;
+    background: #1E3A34;
+}
+
+#header .a .login{
+    border : 1px solid #EAF4F1;
+    color: #EAF4F1;
+    margin : 3px;
+    padding: 6px 11px;
+    border-radius: 15px;
+    text-decoration: none;
+    background: #1E3A34;
+    font-size: 20px;
+}
+#header .a .login:hover{
+    font-size: 22px;
+    background: #3d6e64;
+}
+
+
+#header .a .signin{
+    border : 1px solid #EAF4F1;
+    color: #EAF4F1;
+    background: #1E3A34;
+    padding: 6px 11px;
+    border-radius: 15px;
+    text-decoration: none;
+    display: inline;
+    font-size: 20px;
+}
+#header .a .signin:hover{
+    font-size: 22px;
+    background: #3d6e64;
+
+}
+
+#header .middle{
+    display: flex;
+    background: #1E3A34;
+}
+#header .middle a{
+    font-size: 19px;
+    color:#EAF4F1;
+    margin:20px;
+    text-decoration: none;
+    background: #1E3A34;
+}
+#header .middle a:hover{
+    transition: 0.2s;
+    text-decoration-line: overline;
+    font-weight: bold;
+}
+
+
+/*------------------------------------ midder/search box---------------------------------------------------------------------*/
+#midder{
+    padding: 5px;
+    height: 40px;
+    background-image: url(/static/images/landing_page_images/image.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 300px;
+    text-align: center;
+}
+#midder h1{
+    margin-top: 100px;
+    color: #EAF4F1;
+    font-size: 65px;
+}
+#midder h3{
+    color: #EAF4F1;
+    font-size: 25px;
+}
+
+#midder .sbox{
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    font-size: 30px;
+}
+#midder .sbox .inp{
+    font-size: 20px;
+    padding: 10px;
+    padding-left: 50px ;
+    border-radius: 30px;
+    border: none;
+    border-width: 0cap;
+    width: 50%;
+    background-color: #EAF4F1;
+    box-shadow: 0 0 8px rgba(51,65,85,0.3);
+}
+
+
+/*-------------------------------------card section--------------------------------------------------------*/
+#cardsouterpart{
+    /* background: #CFE3DD; */
+    background: #EAF4F1;
+    display: flex;
+}
+#cardsinnerpart{
+    display: flex;
+    background: #EAF4F1;
+    border-radius: 30px;
+    width: 80% ;
+    margin: auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+#cardsinnerpart .c_1{
+    background:#1E3A34;
+    color: white;
+    height: 300px;
+    width: 200px;
+    margin: 5px;
+    border-radius: 30px;
+    padding: 50px;
+    flex-shrink: 0;
+    box-shadow:0 6px 20px rgba(0,0,0,0.15);
+}
+#cardsinnerpart .c_2{
+    background:#1E3A34;
+    color: white;
+    height: 300px;
+    width: 200px;
+    margin: 5px;
+    border-radius: 30px;
+    padding: 50px;
+    flex-shrink: 0;
+    box-shadow:0 6px 20px rgba(0,0,0,0.15);
+
+}
+#cardsinnerpart .c_3{
+    background-color: blue;
+    height: 300px;
+    width: 300px;
+    margin: 5px;
+    border-radius: 30px;
+    padding: 10px;
+    flex-shrink: 0;
+    box-shadow:0 6px 20px rgba(0,0,0,0.15);
+
+}
+#cardsinnerpart .c_4{
+    background-color: blue;
+    height: 300px;
+    width: 300px;
+    margin: 5px;
+    border-radius: 30px;
+    padding: 10px;
+    flex-shrink: 0;
+    box-shadow:0 6px 20px rgba(0,0,0,0.15);
+
+}
+#cardsinnerpart .c_5{
+    background-color: blue;
+    height: 300px;
+    width: 300px;
+    margin: 5px;
+    border-radius: 30px;
+    padding: 10px;
+    flex-shrink: 0;
+    box-shadow:0 6px 20px rgba(0,0,0,0.15);
+
+}
+
+/* ----------------------------------------footer part---------------------------------------------------------------------- */
+#footer{
+    background-color: #1E3A34;
+    display: flex;
+    justify-content: space-between;
+    height: 100px;
+}
+#footer .left_part{
+    padding-top: 10px;
+}
+#footer .links{
+    text-align: center;
+    padding-bottom: 10px;
+}
+#footer .links a{
+    text-decoration: none;
+    color: #EAF4F1;
+    font-size: 15px;
+    margin-right:25px ;
+}
+#footer .links a:hover{
+    transition: 0.1s;
+    font-weight: bolder;
+}
+
+#footer .middle{
+    margin: auto;
+    color: #EAF4F1;
+    text-align: center;
+    font-size: 15px;
+}

@@ -1,0 +1,134 @@
+*{
+    margin : 0px;
+}
+body{
+    background: #EAF4F1;
+}
+
+ 
+#canvas{
+    min-height: 100vh;
+    background:#EAF4F1;
+
+}
+/*------------------------------------------------header-------------------------------------------------------------------- */
+
+#header{
+    display: flex;
+    justify-content: center;
+    background: #1E3A34;
+
+}
+
+#navebar{
+    width: 100%;
+    height: 50px;
+    padding : 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1E3A34;
+}
+#header #navebar .logo{
+    display: flex;
+    background: #1E3A34;
+}
+
+
+#header #navebar .logo .logotext{
+    color: #EAF4F1;
+    background: #1E3A34;
+}
+#header #navebar .logo .logotext h1{
+    padding: 0px 10px;
+    background: #1E3A34;
+    font-size: 35px;
+}
+
+#header .a .login{
+    border : 1px solid #EAF4F1;
+    color: #EAF4F1;
+    margin : 3px;
+    padding: 6px 11px;
+    border-radius: 15px;
+    text-decoration: none;
+    background: #1E3A34;
+    font-size: 20px;
+}
+#header .a .login:hover{
+    font-size: 22px;
+    background: #3d6e64;
+}
+
+
+#header .a .signin{
+    border : 1px solid #EAF4F1;
+    color: #EAF4F1;
+    background: #1E3A34;
+    padding: 6px 11px;
+    border-radius: 15px;
+    text-decoration: none;
+    display: inline;
+    font-size: 20px;
+}
+#header .a .signin:hover{
+    font-size: 22px;
+    background: #3d6e64;
+
+}
+
+#header .middle{
+    display: flex;
+    background: #1E3A34;
+}
+#header .middle a{
+    font-size: 19px;
+    color:#EAF4F1;
+    margin:20px;
+    text-decoration: none;
+    background: #1E3A34;
+}
+#header .middle a:hover{
+    transition: 0.2s;
+    text-decoration-line: overline;
+    font-weight: bold;
+}
+
+/* ======================================content=========================================================== */
+#content{
+    /* border: 0.5px solid black; */
+    width: 50%;
+    padding: 20px;
+    margin-left: 25%;
+    color: #1E3A34;
+    margin-top: 3%;
+    border-radius: 20px;
+    /* background-color: white; */
+    height: 500px;
+}
+#content label{
+    font-size: 20px;
+}
+#content input{
+    padding: 10px;
+    font-size: 25px;
+    
+}
+
+#content .btn button{
+    padding: 10px;
+    font-size: 25px;
+    width: 700px;
+    border-radius: 8px;
+    color:#EAF4F1;
+    background-color: #1E3A34;
+    border:2px solid #EAF4F1;
+}
+
+#content  .btn :hover{
+    background-color:#EAF4F1;
+    color: #1E3A34;
+    border:2px solid #1E3A34;
+    background: #EAF4F1;
+    transition: 0.1s;
+}
