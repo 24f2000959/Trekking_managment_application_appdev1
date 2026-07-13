@@ -11,14 +11,14 @@ body{
     background-color: #F5F9FA;
 }
 
-/* ----------------------------------------------left_part--------------------------------------------- */
+/*============================================================left_part============================================== */
 #left_part{
     box-shadow:0 4px 15px rgba(0,0,0,.08);
     position: fixed;
     width: 20%;
     background-color: #0F4C5C;
     min-height: 100vh;
-    color: #F8FAFC;
+    color: #F5F9FA;
 }
 #left_part .logo{
     background-color:#0F4C5C;
@@ -32,25 +32,25 @@ body{
     margin-left: 80px;
     font-size: 30px;
     /* font-weight: bold; */
-    color: #F8FAFC;
+    color: #F5F9FA;
 }
 #left_part .logo h1{
     margin-top: 20px;
     font-size:30px ;
     /* font-weight: bold; */
-    color:#F8FAFC ;
+    color:#F5F9FA ;
 }
 #left_part .line{
     height: 2px;
-    background-color:#F8FAFC;
+    background-color:#F5F9FA;
     padding: 0px;
     margin: 0px;
-    color: #1E3A34;
+    color: #0F4C5C;
 }
 #left_part .content{
     display: flex;
     flex-direction: column;
-    color: #F8FAFC;
+    color: #F5F9FA;
 }
 #left_part .content .options{
     display: flex;
@@ -62,7 +62,7 @@ body{
     padding-bottom: 10px;
     font-size: 16px;
     text-decoration: none;
-    color: #F8FAFC;
+    color: #F5F9FA;
 }
 #left_part .content .options a:hover{
     transition: 0.1s;
@@ -75,17 +75,17 @@ body{
     font-size: 16px;
     padding-top: 10px;
     padding-bottom: 10px;
-    color: #F8FAFC;
+    color: #F5F9FA;
 
 }
 #left_part .content .logout a{
     text-decoration: none;
-    color: #F8FAFC;
+    color: #F5F9FA;
 }
 #left_part .content .logout:hover{
     transition: 0.1s;
     background-color:#146C7D;
-    color: #F8FAFC;
+    color: #F5F9FA;
     font-weight: bolder;
 }
 .active-menu{
@@ -94,7 +94,7 @@ body{
 }
 
 
-/* ----------------------------------------------right_part--------------------------------------------- */
+/* ==================================================right_part========================================================= */
 #right_part{
     width: 80%;
     margin-left: 20%;
@@ -105,71 +105,53 @@ body{
     width: 79%;
     height: 50px;
     margin-left: 10px;
-    background-color: #146C7D;
-    color: #F8FAFC;
+    background-color: #0F4C5C;
+    color: #F5F9FA;
     display: flex;
     justify-content: space-between;
     position: fixed;
-    z-index: 3;
+    z-index: 5;
 }
 #right_part #top_part h1{
     margin-left: 15px;
     margin-top: 5px;
     font-size: 30px;
     /* font-weight: bold; */
-    color: #F8FAFC;
+    color: #F5F9FA;
 }
-#right_part #top_part .icons{
-    padding-top: 7px;
-    padding-right: 10px;
-    /* font-weight: bolder; */
-}
-#right_part #top_part .icons a{
-    font-size: 25px;
-    text-decoration: none;
-    color: #F8FAFC;
-}
-#right_part #top_part .icons a:hover{
-    transition: 0.1s;
-    font-size: 27px;
-    background-color: #0F4C5C;
-    border-radius: 300px;
-    padding: 1px;
+#right_part #top_part .extra{
+    font-size: 30px;
 }
 
-/* --------content part--------------- */
+
+
+/* ==============================================content part====================================== */
 #right_part #content{
-    min-height: 100vh;
-    margin-top: 60px;
-    z-index: 1;
-}
-/* --------------------------------------card-------------------------- */
-#right_part #content .card{
-    background: #ffffff;
-    border-top-left-radius: 15px;
-    border-bottom-left-radius: 15px;
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-    
-    box-shadow:2px 4px 15px rgba(0,0,0,.08);
-    width: 98.5%;
+    margin-top: 55px;
     margin-left: 10px;
-    margin-top: 10px;
-    min-height: 100vh;
+    width: 78.5%;
+    height: 76.5vh;
+    position: fixed;
+    z-index: 2;
+    overflow-y: auto;
+    background-color: white;
+    border-radius: 20px;
 }
 
 
-/* ----------------------footer------------------------------------------------------------ */
+/* ==============================================footer============================================================= */
 #footer{
-    height: 100px;
+    min-height: 100vh;
     text-align: center;
     padding-top: 10px;
     margin-left: 10px;
     margin-right: 10px;
-    margin-top: 10px;
-    background-color: #146C7D;
-    color:#F8FAFC;
+    margin-top: 38%;
+    background-color: #0F4C5C;
+    color:#F5F9FA;
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    width: 99%;
+    width: 79%;
     font-style: italic;
+    position: fixed;
+    z-index: 1;
 }
