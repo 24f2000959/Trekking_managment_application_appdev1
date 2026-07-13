@@ -25,11 +25,15 @@ def signin():
         username = request.form.get("name")
         email = request.form.get("email")
         pwd = request.form.get("pwd")
+        cpwd = request.form.get("cpwd")
         role = request.form.get("role")
 
         #validation
         if not username or not email or not pwd or not role:
             flash("fill all the required field")
+            return redirect("/signin_page")
+        if pwd != cpwd:
+            flash("password and confirm password should be same")
             return redirect("/signin_page")
         
         #chechking existing user
@@ -450,6 +454,61 @@ def blacklist_user(user_id):
         db.session.commit()
     return redirect("/admin/user_page")
 
+
+# ===================================================User=================================================================
+@app.route("/user/user_dashboard")
+def user_dashboard():
+    if "user_id" not in session:
+        flash("login first!")
+        return redirect("/login_page")
+    
+    if session.get("role") != "user":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    user_id = session.get("user_id")
+    this_user = User.query.filter_by(id=user_id).first()
+
+    if this_user is None : 
+        session.clear()
+        flash("please login again!")
+        return redirect("/login_page")
+    
+    #show only open treks
+    treks = Trek.query.filter_by(status="open").all()
+
+    #user bookings
+    user_bookings = Booking.query.filter_by(user_id=this_user.id)
+
+    return render_template("user_dashboard.html", this_user=this_user, treks=treks, user_bookings=user_bookings)
+
+
+
+
+
+# ===================================================staff=================================================================
+@app.route("/staff/staff_dashboard")
+def staff_dashboard():
+
+    if "user_id" not in session:
+        flash("login first !")
+        return redirect("/login_page")
+
+    if session.get("role") != "staff":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    user_id = session.get("user_id")  #session["user_id"] gives error if not in cookie 
+    this_user = User.query.filter_by(id=user_id).first()
+
+    if this_user is None :
+        session.clear()   #sometimes session is still present in cookies 
+        flash("first login")
+        return redirect("login_page")
+    
+    treks = Trek.query.all()
+    bookings = Booking.query.all()
+    return render_template("staff/staff_dashboard.html", this_user=this_user, treks=treks, bookings=bookings)
 
 
 # ===================================================logout=================================================================

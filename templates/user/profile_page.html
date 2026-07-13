@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>user dashboard</title>
+
+    <link rel="stylesheet" href="/static/stylesheets/user/dashboard_profile_page.css">
+
+    <!-- adding bootstrap -->    
+            <!-- adding icons boostrap -->
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+                
+            <!-- adding container bootstrap -->
+             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" >
+            
+
+</head>
+<body>
+    <div id="main">
+        
+        <div id="container">
+            <!-- --------------------------------------------left part---------------------------------------------------------- -->
+            <div id="left_part">
+                <div class="logo">
+                    <i class="bi bi-file-person"></i>
+                    <h1>User</h1>
+                </div>
+                <div class="line">
+                    -
+                </div>
+                <div class="content">
+                    <div class="options">
+                        <a href="/user/user_dashboard">Dashboard</a>
+                        <a href="">Treks</a>
+                        <a href="">History</a>
+                        <a href="" class="active-menu">Profile</a>
+                    </div>
+                    <div class="logout">
+                        <a href="/logout"><i class="bi bi-box-arrow-right"></i> Logout </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- --------------------------------------------right part ----------------------------------------------------- -->
+            <div id="right_part">
+                 <!-- -------------------------top part ---------------------------------- -->
+                <div id="top_part">
+                    <h1>
+                        Dashboard
+                    </h1>
+                    <div class="icons">
+                        <h1>...</h1>
+                    </div>
+                </div>
+                <!-- ---------------------------content------------------------------------- -->
+                <div id="content" style="padding-left: 5%;">
+                    <h1>Name :{{}} </h1>
+                    <h1> Email :{{}} </h1>
+                    <h1> Password :{{}} </h1>
+                    <a href="" 
+                                style="margin: 10% 32%; padding: 5px 100px" 
+                                class="btn btn-primary">Edit Profile</a>
+                </div>
+                <!-- --------------------footer------------------------ -->
+                <div id="footer">
+                     Wheels Treckking Trekker Panel • v1.0
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</body>
+</html>

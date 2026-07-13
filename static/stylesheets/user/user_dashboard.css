@@ -102,7 +102,7 @@ body{
 /* ------------top part--------------- */
 #right_part #top_part{
     box-shadow:0 4px 15px rgba(0,0,0,.08);
-    width: 79%;
+    width: 77.5%;
     height: 50px;
     margin-left: 10px;
     background-color: #325a51;
@@ -156,6 +156,7 @@ body{
     margin-left: 10px;
     margin-top: 10px;
     height: 150px;
+    padding-left: 10px;
 }
 #right_part #content .card_section_1 .c_2{
     background: #ffffff;
@@ -174,7 +175,7 @@ body{
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
     box-shadow:0 4px 15px rgba(0,0,0,.08);
-    width: 33%;
+    width: 29%;
     margin-left: 10px;
     margin-top: 10px;
     height: 150px;
@@ -188,7 +189,7 @@ body{
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
     box-shadow:0 4px 15px rgba(0,0,0,.08);
-    width: 99%;
+    width: 97%;
     margin-left: 10px;
     margin-top: 10px;
     min-height: 250px;
@@ -201,7 +202,7 @@ body{
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
     box-shadow:0 4px 15px rgba(0,0,0,.08);
-    width: 99%;
+    width: 97%;
     margin-left: 10px;
     margin-top: 10px;
     min-height: 250px;
@@ -219,6 +220,6 @@ body{
     background-color: #325a51;
     color:#F8FAFC;
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    width: 100%;
+    width: 97%;
     font-style: italic;
 }

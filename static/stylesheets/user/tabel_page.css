@@ -11,7 +11,7 @@ body{
     background-color: #F8FAFC;
 }
 
-/* ----------------------------------------------left_part--------------------------------------------- */
+/*============================================================left_part============================================== */
 #left_part{
     box-shadow:0 4px 15px rgba(0,0,0,.08);
     position: fixed;
@@ -94,7 +94,7 @@ body{
 }
 
 
-/* ----------------------------------------------right_part--------------------------------------------- */
+/* ==================================================right_part========================================================= */
 #right_part{
     width: 80%;
     margin-left: 20%;
@@ -110,6 +110,7 @@ body{
     display: flex;
     justify-content: space-between;
     position: fixed;
+    z-index: 5;
 }
 #right_part #top_part h1{
     margin-left: 15px;
@@ -118,44 +119,63 @@ body{
     /* font-weight: bold; */
     color: #F8FAFC;
 }
-#right_part #top_part .icons{
-    padding-top: 7px;
-    padding-right: 10px;
-    /* font-weight: bolder; */
-}
-#right_part #top_part .icons a{
-    font-size: 25px;
-    text-decoration: none;
-    color: #F8FAFC;
-}
-#right_part #top_part .icons a:hover{
-    transition: 0.1s;
-    font-size: 27px;
-    background-color: #1E3A34;
-    border-radius: 300px;
-    padding: 1px;
+#right_part #top_part .extra{
+    font-size: 30px;
 }
 
-/* --------content part--------------- */
+/* ==========================================search box=================================== */
+#search{
+    display: flex;
+    justify-content: center;
+    margin-top: 70px;
+    padding-left: 20%;
+    position: fixed;
+    z-index: 4;
+}
+#search input{
+    border-radius: 20px;
+    border: 1px solid grey;
+    width: 500px;
+    text-align: center;
+    box-shadow: 0 0 8px rgba(51,65,85,0.3);
+}
+.flash-card{
+    margin-top: 110px;
+    background-color: rgb(240, 240, 10);
+    width: 78.5% ;
+    margin-left:10px ;
+    padding-left: 20%;
+    position: fixed;
+    z-index: 3;
+}
+
+
+/* ==============================================content part====================================== */
 #right_part #content{
-    min-height: 100vh;
-    margin-top: 50px;
-    width: 99.5%;
+    margin-top: 140px;
+    margin-left: 10px;
+    width: 78.5%;
+    height: 64vh;
+    position: fixed;
+    z-index: 2;
+    overflow-y: auto;
+    /* background-color: red; */
 }
 
 
-
-/* ----------------------footer------------------------------------------------------------ */
+/* ==============================================footer============================================================= */
 #footer{
-    height: 100px;
+    min-height: 100vh;
     text-align: center;
     padding-top: 10px;
     margin-left: 10px;
     margin-right: 10px;
-    margin-top: 10px;
+    margin-top: 38%;
     background-color: #325a51;
     color:#F8FAFC;
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    width: 100%;
+    width: 79%;
     font-style: italic;
+    position: fixed;
+    z-index: 1;
 }
