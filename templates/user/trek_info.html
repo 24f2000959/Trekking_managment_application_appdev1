@@ -24,55 +24,53 @@
             </div>
             <!-- ------------------------------------------------content------------------------------------ -->
             <div id="content">
-                {% for t in trek %}
                 <form class="row g-3">
                     <div class="col-md-6">
                         <label for="trek" class="form-label">Trek Name</label>
-                        <input readonly class="form-control" id="trek" value="{{t.trek_name}}">
+                        <input readonly class="form-control" id="trek" value="{{trek.trek_name}}">
                     </div>
                     <div class="col-md-2">
                         <label for="end_date" class="form-label">Duration</label>
-                        <input readonly class="form-control" id="end_date" value="{{t.duration}}">
+                        <input readonly class="form-control" id="end_date" value="{{trek.duration}}">
                     </div>
                     <div class="col-md-2">
                         <label for="end_date" class="form-label">Available slots</label>
-                        <input readonly class="form-control" id="end_date" value="{{t.available_slots}}">
+                        <input readonly class="form-control" id="end_date" value="{{trek.available_slots}}">
                     </div>
                     
                     <div class="col-12">
                         <label for="inputAddress" class="form-label">Location</label>
-                        <input readonly class="form-control" id="inputAddress" value="{{t.location}}">
+                        <input readonly class="form-control" id="inputAddress" value="{{trek.location}}">
                     </div>
                     
                     <div class="col-md-4">
                         <label for="inputState" class="form-label">Difficulty</label>
-                        <input readonly class="form-control" id="inputState" value="{{t.difficulty}}">
+                        <input readonly class="form-control" id="inputState" value="{{trek.difficulty}}">
 
                     </div>
                     <div class="col-md-4">
                         <label for="inputState" class="form-label">Status</label>
-                        <input readonly class="form-control" id="inputState" value="{{t.status}}">
+                        <input readonly class="form-control" id="inputState" value="{{trek.status}}">
 
                     </div>
                     <div class="col-md-4">
                         <label for="inputState" class="form-label">select Staff</label>
-                        <input readonly class="form-control" id="inputState" value="{{t.staff_id.user_name}}">
+                        <input readonly class="form-control" id="inputState" value="{{trek.staff_id.user_name}}">
                         
                     </div>
                     <div class="col-md-2">
                         <label for="start_date" class="form-label">Start Date</label>
-                        <input readonly class="form-control" id="start_date" value="{{t.start_date}}">
+                        <input readonly class="form-control" id="start_date" value="{{trek.start_date}}">
                     </div>
                     <div class="col-md-2">
                         <label for="end_date" class="form-label">End Date</label>
-                        <input readonly class="form-control" id="end_date" value="{{t.end_date}}">
+                        <input readonly class="form-control" id="end_date" value="{{trek.end_date}}">
                     </div>
                     
                     <label for="description">Description</label>
-                    <textarea id="description" rows="5" cols="40" readonly >{{t.description}}</textarea>
+                    <textarea id="description" rows="5" cols="40" readonly >{{trek.description}}</textarea>
                                         
                 </form>
-                {% endfor %}
                 <div class="col-12" style="margin-left: 45%;">
                     <a href="/user/user_dashboard" class="btn btn-primary" style="width: 10%;"> back </a>
                 </div>
