@@ -772,6 +772,32 @@ def my_treks_page():
     
     return render_template("/staff/my_treks_page.html",this_user=this_user, trek=trek)
 
+# ---------------------|trekker|---------------
+@app.route("/staff/trekker_page/<int:t_id>")
+def trekker_page(t_id):
+    if "user_id" not in session:
+        flash("login first !")
+        return redirect("/login_page")
+
+    if session.get("role") != "staff":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    user_id = session.get("user_id")  
+    this_user = User.query.filter_by(id=user_id).first()
+
+    if this_user is None :
+        session.clear()   
+        flash("first login")
+        return redirect("login_page")
+    
+    trek = Trek.query.filter_by(id=t_id,staff_id=this_user.id).all()
+    if trek is None:
+        flash("Trek not found")
+        return redirect("/staff/my_treks")
+    
+    bookings = Booking.query.filter_by(trek_id=trek.id,booking_status="booked").all()
+    return render_template("/staff/trekker_page.html",this_user=this_user, trek=trek, bookings=bookings)
 
 
 
