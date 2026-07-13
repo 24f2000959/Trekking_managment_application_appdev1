@@ -794,10 +794,59 @@ def trekker_page(t_id):
     trek = Trek.query.filter_by(id=t_id,staff_id=this_user.id).all()
     if trek is None:
         flash("Trek not found")
-        return redirect("/staff/my_treks")
+        return redirect("/staff/my_treks_page")
     
-    bookings = Booking.query.filter_by(trek_id=trek.id,booking_status="booked").all()
-    return render_template("/staff/trekker_page.html",this_user=this_user, trek=trek, bookings=bookings)
+    booking = Booking.query.filter_by(trek_id=trek.id,booking_status="booked").all()
+    return render_template("/staff/trekker_page.html",this_user=this_user, trek=trek, booking=booking)
+
+# ---------------|edit treks|---------------------------
+@app.route("/staff/trek_edit/<int:t_id>", methods=["GET","POST"])
+def trek_edit(t_id):
+    if "user_id" not in session:
+        flash("login first !")
+        return redirect("/login_page")
+
+    if session.get("role") != "staff":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    user_id = session.get("user_id")  
+    this_user = User.query.filter_by(id=user_id).first()
+
+    if this_user is None :
+        session.clear()   
+        flash("first login")
+        return redirect("login_page")
+    
+    trek = Trek.query.filter_by(id=t_id, staff_id=this_user.id).first()
+    if trek is None:
+        flash("Trek not found")
+        return redirect("/staff/my_treks_page")
+    
+    if request.method=="POST":
+        status = request.form.get("status")
+        available_slot = request.form.get("available_slot")
+
+        if not status or not available_slot:
+            flash("please fill all fields")
+            return redirect(f"/staff/trek_edit/{trek.id}")
+        
+        available_slot = int(available_slot)
+        if available_slot < 0 :
+            flash("available slots cannot be negative")
+            return redirect(f"/staff/trek_edit/{trek.id}")
+        if available_slot > trek.total_slots :
+            flash("available slots cannot exceede total slots")
+            return redirect(f"/staff/trek_edit/{trek.id}")
+        
+        trek.status = status
+        trek.available_slots = available_slot
+        db.session.commit()
+        flash("Trek updated successfully.")
+        return redirect("/staff/my_treks")
+
+
+    return render_template("/staff/trek_edit.html",this_user=this_user, trek=trek)
 
 
 

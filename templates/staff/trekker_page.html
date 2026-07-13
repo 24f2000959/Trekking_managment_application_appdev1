@@ -3,7 +3,7 @@
 <head>
     <title>user dashboard</title>
 
-    <link rel="stylesheet" href="/static/stylesheets/user/tabel_page.css">
+    <link rel="stylesheet" href="/static/stylesheets/staff/tabel_page.css">
 
     <!-- adding bootstrap -->    
             <!-- adding icons boostrap -->
@@ -66,30 +66,28 @@
                 </div>
                 <!-- ---------------------------content------------------------------------- -->
                 <div id="content">
+                    <h2>{{trek.trek_name}} trekker</h2>
                     <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th scope="col">Trek name</th>
-                            <th scope="col">Difficulty</th>
-                            <th scope="col">Location</th>
+                            <th scope="col">User name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Booking date</th>
                             <th scope="col">status</th>
-                            <th scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for b in booking %}
                         <tr>
-                            <td>{{b.trek.trek_name}}</td>
-                            <td>{{b.trek.difficulty}}</td>
-                            <td>{{b.trek.location}}</td>
+                            <td>{{b.user.user_name}}</td>
+                            <td>{{b.user.email}}</td>
+                            <td>{{b.booking_date}}</td>
                             <td>{{b.booking_status}}</td>
-                            <td>
-                                <a href="/user/cancel_booking/{{booking.id}}" class="btn btn-danger">Cancel</a>
-                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                     </table>
+                    <a href="/staff/my_treks" class="btn btn-secondary" >Back</a>
                 </div>
                 <!-- --------------------footer------------------------ -->
                 <div id="footer">
