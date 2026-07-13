@@ -13,7 +13,7 @@
 #container{
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    height: 100vh;
 }
 
 
@@ -43,4 +43,6 @@
     margin-left: 15px;
     margin-right: 15px;
     margin-top: 15px;
+    width: 100vh;
+
 }

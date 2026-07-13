@@ -53,9 +53,8 @@
                 </div>
 
                 <!-- ---------------------------search box--------------------------------- -->
-                 <div id="search">
-                    <input type="text" placeholder="search by name or id">
-                    <button type="button" class="btn btn-primary">Primary</button>
+                 <div id="search" style="padding-left: 380px;">
+                    <h1>staff : {{this_user.user_name}}</h1>
                 </div>
                 <div class="flash-card">
                     {% for msg in get_flashed_messages() %}
@@ -64,7 +63,7 @@
                 </div>
                 <!-- ---------------------------content------------------------------------- -->
                 <div id="content">
-                    <h2>{{trek.trek_name}} trekker</h2>
+                    <h2>trekker:{{trek.trek_name}}</h2>
                     <table class="table table-striped">
                     <thead>
                         <tr>
@@ -85,7 +84,7 @@
                         {% endfor %}
                     </tbody>
                     </table>
-                    <a href="/staff/my_treks" class="btn btn-secondary" >Back</a>
+                    <a href="/staff/my_treks_page" class="btn btn-secondary" >Back</a>
                 </div>
                 <!-- --------------------footer------------------------ -->
                 <div id="footer">

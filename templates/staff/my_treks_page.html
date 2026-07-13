@@ -54,9 +54,8 @@
                 </div>
 
                 <!-- ---------------------------search box--------------------------------- -->
-                 <div id="search">
-                    <input type="text" placeholder="search by name or id">
-                    <button type="button" class="btn btn-primary">Primary</button>
+                 <div id="search" style="padding-left: 500px;">
+                    <h1>Assigned Treks</h1>
                 </div>
                 <div class="flash-card">
                     {% for msg in get_flashed_messages() %}
@@ -83,7 +82,7 @@
                             <td>{{t.difficulty}}</td>
                             <td>{{t.location}}</td>
                             <td>{{t.available_slots}}</td>
-                            <td>{{t.tatus}}</td>
+                            <td>{{t.status}}</td>
                             <td>
                                 <a href="/staff/trekker_page/{{t.id}}"class="btn btn-success btn-sm">Trekkers</a>
                                 <a href="/staff/trek_edit/{{t.id}}" class="btn btn-primary btn-sm">Edit</a>

@@ -88,6 +88,10 @@ def login():
         if this_user.role == "staff" and this_user.status == "blacklist":
             flash("admin blacklisted your account")
             return redirect("/login_page")
+        
+        if this_user.role == "user" and this_user.status == "blacklist":
+            flash("admin blacklisted your account")
+            return redirect("/login_page")
 
         #storing info in sessions
         session["user_id"] = this_user.id
@@ -942,7 +946,7 @@ def trek_edit(t_id):
     
     if request.method=="POST":
         status = request.form.get("status")
-        available_slot = request.form.get("available_slot")
+        available_slot = request.form.get("available_slots")
 
         if not status or not available_slot:
             flash("please fill all fields")

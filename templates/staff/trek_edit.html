@@ -29,29 +29,36 @@
                         {{msg}}
                     {% endfor %}
                 </div>
-                {% for t in trek %}
-                <form class="row g-3" action="/staff/trek_edit/{{t.id}}" method="POST"> 
-                    <div class="col-md-4">
-                        <label for="inputState" class="form-label">Status</label>
-                        <select id="inputState" class="form-select" name="status">
-                            <option>open</option>
-                            <option>close</option>
-                            <option>complete</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="inputState" class="form-label">available Slots</label>
-                        <input type="number" id="inputState" class="form-control" name="available_slots" value="{{t.available_slot}}">
-                    </div>    
-                                        
-                    <div class="col-12" style="margin-left: 45%;">
-                        <button type="submit" class="btn btn-primary" style="width: 10%;"> Update </button>
-                    </div>
-                </form>
-                {% endfor %}
+                <div>
+                    <form class="row g-1" action="/staff/trek_edit/{{trek.id}}" method="POST"> 
+                        <div class="col-md-4">
+                            <label for="inputState" class="form-label">Status</label>
+                            <select id="inputState" class="form-select" name="status">
+                                <option value="open" {% if trek.status == "open" %}selected{% endif %}>
+                                    Open
+                                </option>
 
-                <div class="col-12" style="margin-left: 45%;">
-                    <a href="/user/user_dashboard" class="btn btn-primary" style="width: 10%;"> back </a>
+                                <option value="close" {% if trek.status == "close" %}selected{% endif %}>
+                                    Close
+                                </option>
+
+                                <option value="complete" {% if trek.status == "complete" %}selected{% endif %}>
+                                    Complete
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="inputState" class="form-label">available Slots</label>
+                            <input type="number" id="inputState" class="form-control" name="available_slots" value="{{trek.available_slots}}">
+                        </div>    
+                                            
+                        <div class="col-12" >
+                            <button type="submit" class="btn btn-primary" style="width: 10%;"> Update </button>
+                        </div>
+                    </form>
+                </div>    
+                <div class="col-12" >
+                    <a href="/staff/my_treks_page" class="btn btn-primary" style="width: 10%; margin-top: 20px;margin-right: 100px;"> back </a>
                 </div>
             </div>
             
