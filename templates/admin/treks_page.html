@@ -43,8 +43,10 @@
                 </div>
                 <!-- -------------------------------------------------search part-------------------------- -->
                 <div id="search">
-                    <input type="text" placeholder="search by name or id">
-                    <button type="button" class="btn btn-primary" style="border-radius: 20px;">search</button>
+                    <form action="/admin/admin_search_trek" method="GET">
+                        <input type="text" placeholder="search by name " name="search">
+                        <button type="submit" class="btn btn-primary" style="border-radius: 20px;">search</button>
+                    </form>
                 </div>
                 <div id="flash-card">
                     {% for msg in get_flashed_messages() %}
@@ -72,7 +74,7 @@
                                 <td>{{ t.trek_name }}</td>
                                 <td>{{ t.location }}</td>
                                 <td>{{ t.difficulty }}</td>
-                                <td>{{ t.slots }}</td>
+                                <td>{{ t.available_slots }}</td>
                                 <td>{{ t.status }}</td>
                                 <td>{{ t.staff.user_name }}</td>
                                 <td>

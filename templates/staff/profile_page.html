@@ -29,10 +29,9 @@
                 </div>
                 <div class="content">
                     <div class="options">
-                        <a href="/staff/user_dashboard">Dashboard</a>
-                        <a href="/user/treks_page">Treks</a>
-                        <a href="/user/bookings_history">History</a>
-                        <a href="/staff/profile_page" class="active-menu">Profile</a>
+                        <a href="/staff/staff_dashboard">Dashboard</a>
+                        <a href="/staff/my_treks_page">Assigned Treks</a>
+                        <a href="/staff/staff_profile_page" class="active-menu">Profile</a>
                     </div>
                     <div class="logout">
                         <a href="/logout"><i class="bi bi-box-arrow-right"></i> Logout </a>
@@ -57,7 +56,7 @@
                     <h1> Email :{{this_user.email}} </h1>
                     <h1> Password :{{this_user.password}} </h1>
 
-                    <a href="/user/edit_profile/{{this_user.id}}" 
+                    <a href="/staff/staff_edit_profile/{{this_user.id}}" 
                                 style="margin: 10% 32%; padding: 5px 100px" 
                                 class="btn btn-primary">Edit Profile</a>
                 </div>

@@ -31,10 +31,9 @@
                 </div>
                 <div class="content">
                     <div class="options">
-                        <a href="/staff/user_dashboard" >Dashboard</a>
-                        <a href="/staff/my_treks_page" class="active-menu">My Treks</a>
-                        <a href="/user/bookings_history">History</a>
-                        <a href="/user/profile_page">Profile</a>
+                        <a href="/staff/staff_dashboard" >Dashboard</a>
+                        <a href="/staff/my_treks_page" class="active-menu">Assigned Treks</a>
+                        <a href="/staff/staff_profile_page">Profile</a>
                     </div>
                     <div class="logout">
                         <a href="/logout"><i class="bi bi-box-arrow-right"></i> Logout </a>
@@ -86,7 +85,7 @@
                             <td>{{t.available_slots}}</td>
                             <td>{{t.tatus}}</td>
                             <td>
-                                <a href="/staff/trekker_page/{{t.id}}"class="btn btn-success btn-sm">Participants</a>
+                                <a href="/staff/trekker_page/{{t.id}}"class="btn btn-success btn-sm">Trekkers</a>
                                 <a href="/staff/trek_edit/{{t.id}}" class="btn btn-primary btn-sm">Edit</a>
                             </td>
                         </tr>

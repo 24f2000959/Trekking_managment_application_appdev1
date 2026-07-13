@@ -44,11 +44,11 @@ def signin():
             flash("already registered")
             return redirect("/signin_page")
         
-        # staff should be approved by admin but user already approved
+        # staff should be approved by admin, but user already approve
         if role == "staff":
             status = "pending"
         else: 
-            status = "approved"
+            status = "approve"
         
         new_user = User(user_name=username,email=email,password=pwd,role=role,status=status)
         db.session.add(new_user)
@@ -85,8 +85,9 @@ def login():
             flash("Incorrect Password")
             return redirect("/login_page")
         
-        if this_user.role == "staff" and this_user.status == "blacklisted":
+        if this_user.role == "staff" and this_user.status == "blacklist":
             flash("admin blacklisted your account")
+            return redirect("/login_page")
 
         #storing info in sessions
         session["user_id"] = this_user.id
@@ -99,7 +100,7 @@ def login():
             return redirect("/admin/admin_dashboard")
         
         #staff
-        if this_user.role == "staff" and this_user.status == "approved":
+        if this_user.role == "staff" and this_user.status == "approve":
             return redirect("/staff/staff_dashboard")
         
         if this_user.role== "staff" and this_user.status == "pending":
@@ -168,6 +169,7 @@ def bookings_page():
     bookings=Booking.query.all()
 
     return render_template("/admin/bookings_page.html", bookings=bookings)
+
 
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXX|treks|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 @app.route("/admin/treks_page")
@@ -302,6 +304,23 @@ def edit_trek(trek_id):
         treks.description = request.form.get("description")
         treks.status = request.form.get("status")
 
+        existing_staff = Trek.query.filter(Trek.staff_id == treks.staff_id,Trek.status == "open",Trek.id != trek_id).first()
+        if existing_staff:
+            flash("This staff is already assigned to another open trek.")
+            return redirect(f"/admin/edit_trek/{trek_id}")
+
+        if datetime.strptime(request.form.get("start_date"),"%Y-%m-%d").date() > datetime.strptime(request.form.get("end_date"), "%Y-%m-%d").date():
+            flash("start date should be less than end date")
+            return redirect("/admin/treks_page")
+
+        if int(treks.duration) <= 0:
+            flash("Duration must be greater than 0")
+            return redirect(f"/admin/edit_trek/{trek_id}")
+
+        if int(treks.total_slots) <= 0:
+            flash("Total slots must be greater than 0")
+            return redirect(f"/admin/edit_trek/{trek_id}")
+
         db.session.commit()
         flash("edit successfull")
         return redirect("/admin/treks_page")
@@ -331,12 +350,41 @@ def delete_edit(trek_id):
         flash("trek not found")
         return redirect("/admin/treks_page")
     
+    if Booking.query.filter_by(trek_id=trek.id).first():
+        flash("Cannot delete trek because bookings exist.")
+        return redirect("/admin/treks_page")
+    
     db.session.delete(trek)
     db.session.commit()
     flash("trek deleted successfully")
 
     return redirect("/admin/treks_page")
 
+# -------------------|search treks|----------------------------------
+@app.route("/admin/admin_search_trek" ,methods=["GET"])
+def admin_search_trek():
+    if "user_id" not in session:
+        flash("Please login first")
+        return redirect("/login_page")
+
+    if session.get("role") != "admin":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+
+    this_user = User.query.filter_by(id=session.get("user_id")).first()
+    if this_user is None:
+        session.clear()
+        flash("Please login again")
+        return redirect("/login_page")
+    
+    keyword = request.args.get("search","").strip()
+    if not keyword:
+        return redirect("/admin/treks_page")
+    treks = Trek.query.filter(
+                              (Trek.trek_name.ilike(f"%{keyword}%"))|
+                               (Trek.location.ilike(f"%{keyword}%"))
+                              ).all()
+    return render_template("/admin/treks_page.html",treks=treks,this_user=this_user)
 
 #XXXXXXXXXXXXXxxxxxxxxxx|staff|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 @app.route("/admin/staff_page")
@@ -399,6 +447,29 @@ def blacklist_staff(staff_id):
         db.session.commit()
     return redirect("/admin/staff_page")
 
+# ---------------|search staff|----------------------
+@app.route("/admin/admin_search_staff", methods=["GET"])
+def admin_search_staff():
+    if "user_id" not in session:
+        flash("login first")
+        return redirect("/login_page")
+    
+    if session.get("role") != "admin":
+        flash("Unauthorized Access!")
+        return redirect("/login_page")
+    
+    this_user = User.query.filter_by(id=session.get("user_id")).first()
+    if this_user is None:
+        session.clear()
+        flash("please login again")
+        return redirect("/login_page")
+    
+    keyword = request.args.get("search","").strip()
+    staffs=User.query.filter(
+                              User.role =="staff",
+                              (User.user_name.ilike(f"%{keyword}%"))
+                            ).all()
+    return render_template("/admin/staff_page.html", staffs=staffs, this_user=this_user)
 
 
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|user|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -459,6 +530,31 @@ def blacklist_user(user_id):
         db.session.commit()
     return redirect("/admin/user_page")
 
+# ----------------|search user|--------------------------
+@app.route("/admin/admin_search_user")
+def admin_search_user():
+    if "user_id" not in session:
+        flash("login first")
+        return redirect("/login_page")
+    if session.get("role") != "admin":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    this_user = User.query.filter_by(id=session.get("user_id")).first()
+    if this_user is None:
+        session.clear()
+        flash("please login again")
+        return redirect("/login_page")
+    
+    keyword=request.args.get("search","").strip()
+    users=User.query.filter(
+                            User.role == "user",
+                            (User.user_name.ilike(f"%{keyword}%"))
+                            ).all()
+    return render_template("/admin/user_page.html",users=users, this_user=this_user)
+
+
+
 
 
 
@@ -485,11 +581,11 @@ def user_dashboard():
     
     treks = Trek.query.filter_by(status="open").all()
     user_bookings = Booking.query.filter_by(user_id=this_user.id,booking_status="booked").all()
-    return render_template("user_dashboard.html", this_user=this_user, treks=treks, user_bookings=user_bookings)
+    return render_template("/user/user_dashboard.html", this_user=this_user, treks=treks, user_bookings=user_bookings)
 
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|profile page|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-@app.route("/user/profile_page")
-def profile_page():
+@app.route("/user/user_profile_page")
+def user_profile_page():
     if "user_id" not in session:
         flash("login first")
         return redirect("/login_page")
@@ -507,8 +603,8 @@ def profile_page():
     return render_template("/user/profile_page.html" , this_user=this_user)
 
 # ----------------------|edit profle|-----------------------------
-@app.route("/user/edit_profile/<int:u_id>" ,methods=["GET", "POST"])
-def edit_profile(u_id):
+@app.route("/user/user_edit_profile/<int:u_id>" ,methods=["GET", "POST"])
+def user_edit_profile(u_id):
     if "user_id" not in session:
         flash("first login")
         return redirect("/login_page")
@@ -524,16 +620,14 @@ def edit_profile(u_id):
         return redirect("/login_page")
     
     if request.method=="POST":
-        this_user.user_name = request.form.get("name")
-        this_user.email = request.form.get("email")
         this_user.password = request.form.get("password")
 
-        if not this_user.user_name or not this_user.email or not this_user.password:
+        if not this_user.password:
             flash("please fill all the required fields")
-            return redirect(f"/user/edit_profile/{u_id}")
+            return redirect(f"/user/user_edit_profile/{u_id}")
         
         db.session.commit()
-        return redirect("/user/profile_page")
+        return redirect("/user/user_profile_page")
 
     return render_template("/user/edit_profile.html", this_user=this_user)
 
@@ -617,6 +711,30 @@ def trek_book(trek_id):
     flash("trek booked successfully")
     return redirect("/user/trek_page")
 
+# ------------------------|search trek|--------------------
+@app.route("/user/user_search_trek", methods=["GET"])
+def user_search_trek():
+    if "user_id" not in session:
+        flash("login first")
+        return redirect("/login_page")
+    
+    if session.get("role") != "user":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    this_user = User.query.filter_by(id=session.get("user_id")).first()
+    if this_user is None:
+        flash("please login again")
+        return redirect("/login_page")
+    
+    keyword=request.args.get("search","").strip()
+    trek=Trek.query.filter(
+                            (Trek.difficulty.ilike(f"%{keyword}%"))|
+                            (Trek.location.ilike(f"%{keyword}%"))
+                            ).all()
+    return render_template("/user/treks_page.html" ,trek=trek)
+
+
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX bookings XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
 @app.route("/user/booking_history")
 def booking_history():
@@ -699,8 +817,8 @@ def staff_dashboard():
 
 
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|profile page|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-@app.route("/staff/profile_page")
-def profile_page():
+@app.route("/staff/staff_profile_page")
+def staff_profile_page():
     if "user_id" not in session:
         flash("login first")
         return redirect("/login_page")
@@ -718,8 +836,8 @@ def profile_page():
     return render_template("/staff/profile_page.html" , this_user=this_user)
 
 # ----------------------|edit profle|-----------------------------
-@app.route("/staff/edit_profile/<int:u_id>" ,methods=["GET", "POST"])
-def edit_profile(u_id):
+@app.route("/staff/staff_edit_profile/<int:s_id>" ,methods=["GET", "POST"])
+def staff_edit_profile(s_id):
     if "user_id" not in session:
         flash("first login")
         return redirect("/login_page")
@@ -735,16 +853,15 @@ def edit_profile(u_id):
         return redirect("/login_page")
     
     if request.method=="POST":
-        this_user.user_name = request.form.get("name")
-        this_user.email = request.form.get("email")
         this_user.password = request.form.get("password")
 
-        if not this_user.user_name or not this_user.email or not this_user.password:
+        if not this_user.password:
             flash("please fill all the required fields")
-            return redirect(f"/staff/edit_profile/{u_id}")
+            return redirect(f"/staff/staff_edit_profile/{s_id}")
         
+
         db.session.commit()
-        return redirect("/staff/profile_page")
+        return redirect("/staff/staff_profile_page")
 
     return render_template("/staff/edit_profile.html", this_user=this_user)
 
@@ -791,7 +908,7 @@ def trekker_page(t_id):
         flash("first login")
         return redirect("login_page")
     
-    trek = Trek.query.filter_by(id=t_id,staff_id=this_user.id).all()
+    trek = Trek.query.filter_by(id=t_id,staff_id=this_user.id).first()
     if trek is None:
         flash("Trek not found")
         return redirect("/staff/my_treks_page")
@@ -843,7 +960,7 @@ def trek_edit(t_id):
         trek.available_slots = available_slot
         db.session.commit()
         flash("Trek updated successfully.")
-        return redirect("/staff/my_treks")
+        return redirect("/staff/my_treks_page")
 
 
     return render_template("/staff/trek_edit.html",this_user=this_user, trek=trek)
