@@ -37,7 +37,7 @@ class Trek(db.Model):
     end_date = db.Column(db.Date(), nullable=False)
 
     description = db.Column(db.Text())
-    status = db.Column(db.String(), default="Open")
+    status = db.Column(db.String(), default="Open") #open or close
 
     staff_id = db.Column(
         db.Integer,
@@ -66,5 +66,5 @@ class Booking(db.Model):
 
     booking_date = db.Column(db.Date, default=date.today)
 
-    booking_status = db.Column(db.String(20), default="Booked")
+    booking_status = db.Column(db.String(20), default="booked") #booked cancel
 

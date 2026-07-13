@@ -468,19 +468,193 @@ def user_dashboard():
     
     user_id = session.get("user_id")
     this_user = User.query.filter_by(id=user_id).first()
-
     if this_user is None : 
         session.clear()
         flash("please login again!")
         return redirect("/login_page")
     
-    #show only open treks
     treks = Trek.query.filter_by(status="open").all()
-
-    #user bookings
-    user_bookings = Booking.query.filter_by(user_id=this_user.id)
-
+    user_bookings = Booking.query.filter_by(user_id=this_user.id,booking_status="booked").all()
     return render_template("user_dashboard.html", this_user=this_user, treks=treks, user_bookings=user_bookings)
+
+# profile pageXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+@app.route("/user/profile_page")
+def profile_page():
+    if "user_id" not in session:
+        flash("login first")
+        return redirect("/login_page")
+    
+    if session.get("role") != "user":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    this_user=User.query.filter_by(id=session.get("user_id")).first()
+    if this_user is None:
+        session.clear()
+        flash("please login again")
+        return redirect("/login_page")
+    
+    return render_template("/user/profile_page.html" , this_user=this_user)
+
+# edit profle
+@app.route("/user/edit_profile/<int:u_id>" ,methods=["GET", "POST"])
+def edit_profile(u_id):
+    if "user_id" not in session:
+        flash("first login")
+        return redirect("/login_page")
+    
+    if session.get("role") != "user":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    this_user = User.query.filter_by(id=session.get("user_id")).first()
+    if this_user is None:
+        session.clear()
+        flash("please login again")
+        return redirect("/login_page")
+    
+    if request.method=="POST":
+        this_user.user_name = request.form.get("name")
+        this_user.email = request.form.get("email")
+        this_user.password = request.form.get("password")
+
+        if not this_user.user_name or not this_user.email or not this_user.password:
+            flash("please fill all the required fields")
+            return redirect(f"/user/edit_profile/{u_id}")
+        
+        db.session.commit()
+        return redirect("/user/profile_page")
+
+    return render_template("/user/edit_profile.html", this_user=this_user)
+
+#trek pageXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+@app.route("/user/trek_page")
+def trek_page():
+    if "user_id" not in session:
+        flash("login first")
+        return redirect("/login_page")
+    if session.get("role") != "user":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+        
+    this_user = User.query.filter_by(id=session.get("user_id")).first()
+    if this_user is None:
+        session.clear()
+        flash("please login again")
+        return redirect("/login_page")
+    
+    trek = Trek.query.filter_by(status="open").all()
+    return render_template("/user/treks_page.html" ,trek=trek)
+
+# trek info
+@app.route("/user/trek_info/<int:trek_id>")
+def trek_info(trek_id):
+    if "user_id" not in session:
+        flash("first login")
+        return redirect("/login_page")
+    
+    if session.get("role") != "user":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    this_user=User.query.filter_by(id=session.get("user_id")).first()
+    if this_user is None : 
+        flash("please login again")
+        return redirect("/login_page")
+    
+    trek=Trek.query.filter_by(id=trek_id).first()
+    if trek is None:
+        flash("trek is not there")
+        return redirect("/user/trek_page")
+    return render_template("/user/trek_info.html",trek=trek)
+
+#trek booking
+@app.route("/user/trek_book/<int:trek_id>")
+def trek_book(trek_id):
+    if "user_id" not in session:
+        flash("login first")
+        return redirect("/login_page")
+    
+    if session.get("role") != "user":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    this_user = User.query.filter_by(id=session.get("user_id")).first()
+    if this_user is None:
+        flash("please login again")
+        return redirect("/login_page")
+    
+    trek=Trek.query.filter_by(id=trek_id).first()
+    if trek is None:
+        flash("trek is not there")
+        return redirect("/user/trek_page")
+    if trek.status != "open":
+        flash("thsi trek is not open")
+        return redirect("/user/trek_page")
+    if trek.available_slots <= 0 :
+        flash("no slots available")
+        return redirect("/user/trek_page")
+    
+    booking = Booking.query.filter_by(user_id=this_user.id, trek_id=trek.id,booking_status="booked").first()
+    if booking:
+        flash("already registered for this trek")
+        return redirect("/user/trek_page")
+    
+    new_booking = Booking(user_id=this_user.id, trek_id=trek.id, booking_status="booked")
+    db.session.add(new_booking)
+    trek.available_slots -= 1
+    db.session.commit()
+    flash("trek booked successfully")
+    return redirect("/user/trek_page")
+
+# bookings XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
+@app.route("/user/booking_history")
+def booking_history():
+    if "user_id" not in session:
+        flash("login first")
+        return redirect("/login_page")
+    
+    if session.get("role") != "user":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+
+    this_user = User.query.filter_by(id=session.get("user_id")).first()
+    if this_user is None:
+        flash("please login again")
+        return redirect("/login_page")
+
+    booking= Booking.query.filter_by(user_id=this_user.id).all()
+    return render_template("/user/booking_history.html", booking=booking)
+
+# cancel booking
+@app.route("/user/cancel_booking/<int:booking_id>")
+def cancel_booking(booking_id):
+    if "user_id" not in session:
+        flash("login first")
+        return redirect("/login_page")
+    
+    if session.get("role") != "user":
+        flash("Unauthorized access")
+        return redirect("/login_page")
+    
+    this_user = User.query.filter_by(id=session.get("user_id")).first()
+    if this_user is None:
+        flash("please login again")
+        return redirect("/login_page")
+    
+    booking = Booking.query.filter_by(id=booking_id,user_id=this_user.id,booking_status="booked").first()
+    if booking is None:
+        flash("this booking is not existed")
+        return redirect("/user/booking_history")
+    if booking.booking_status == "cancel":
+        flash("booking already canceled")
+        return redirect("/user/booking_history")
+    booking.booking_status = "cancel"
+    booking.trek.available_slots += 1
+    db.session.commit()
+    flash("booking cancelled")
+
+    return redirect("/user/booking_history")
 
 
 

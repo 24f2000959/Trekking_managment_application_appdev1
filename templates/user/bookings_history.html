@@ -72,20 +72,22 @@
                             <th scope="col">Trek name</th>
                             <th scope="col">Difficulty</th>
                             <th scope="col">Location</th>
-                            <th scope="col">Available Slots</th>
-                            <th scope="col">detail</th>
+                            <th scope="col">status</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {% for b in booking %}
                         <tr>
-                            <td>Mark</td>
-                            <td>Mark</td>
-                            <td>Mark</td>
-                            <td>Mark</td>
-                            <td>Otto</td>
-                            <td>@mdo</td>
+                            <td>{{b.trek.trek_name}}</td>
+                            <td>{{b.trek.difficulty}}</td>
+                            <td>{{b.trek.location}}</td>
+                            <td>{{b.booking_status}}</td>
+                            <td>
+                                <a href="/user/cancel_booking/{{booking.id}}" class="btn btn-danger">Cancel</a>
+                            </td>
                         </tr>
+                        {% endfor %}
                     </tbody>
                     </table>
                 </div>

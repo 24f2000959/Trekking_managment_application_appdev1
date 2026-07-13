@@ -53,10 +53,11 @@
                 </div>
                 <!-- ---------------------------content------------------------------------- -->
                 <div id="content" style="padding-left: 5%;">
-                    <h1>Name :{{}} </h1>
-                    <h1> Email :{{}} </h1>
-                    <h1> Password :{{}} </h1>
-                    <a href="" 
+                    <h1>Name :{{this_user.user_name}} </h1>
+                    <h1> Email :{{this_user.email}} </h1>
+                    <h1> Password :{{this_user.password}} </h1>
+                    
+                    <a href="/user/edit_profile/{{this_user.id}}" 
                                 style="margin: 10% 32%; padding: 5px 100px" 
                                 class="btn btn-primary">Edit Profile</a>
                 </div>

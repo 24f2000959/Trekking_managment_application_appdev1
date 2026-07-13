@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>user dashboard</title>
+    <link rel="stylesheet" href="/static/stylesheets/user/trek_info.css">
+
+    <!-- adding bootstrap -->    
+        <!-- Bootstrap Icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <!-- adding main bootstrap -->
+         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" >
+
+
+</head>
+<body>
+    <div id="main">
+        <div id="container">
+            <!-- -------------------------------------------------top part ------------------------------------------ -->
+            <div id="top_part">
+                <h1>Dashboard</h1>
+                <div class="btn">
+                    <i class="bi bi-three-dots"></i>
+                </div>
+            </div>
+            <!-- ------------------------------------------------content------------------------------------ -->
+            <div id="content">
+                {% for t in trek %}
+                <form class="row g-3">
+                    <div class="col-md-6">
+                        <label for="trek" class="form-label">Trek Name</label>
+                        <input readonly class="form-control" id="trek" value="{{t.trek_name}}">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="end_date" class="form-label">Duration</label>
+                        <input readonly class="form-control" id="end_date" value="{{t.duration}}">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="end_date" class="form-label">Available slots</label>
+                        <input readonly class="form-control" id="end_date" value="{{t.available_slots}}">
+                    </div>
+                    
+                    <div class="col-12">
+                        <label for="inputAddress" class="form-label">Location</label>
+                        <input readonly class="form-control" id="inputAddress" value="{{t.location}}">
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label for="inputState" class="form-label">Difficulty</label>
+                        <input readonly class="form-control" id="inputState" value="{{t.difficulty}}">
+
+                    </div>
+                    <div class="col-md-4">
+                        <label for="inputState" class="form-label">Status</label>
+                        <input readonly class="form-control" id="inputState" value="{{t.status}}">
+
+                    </div>
+                    <div class="col-md-4">
+                        <label for="inputState" class="form-label">select Staff</label>
+                        <input readonly class="form-control" id="inputState" value="{{t.staff_id.user_name}}">
+                        
+                    </div>
+                    <div class="col-md-2">
+                        <label for="start_date" class="form-label">Start Date</label>
+                        <input readonly class="form-control" id="start_date" value="{{t.start_date}}">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="end_date" class="form-label">End Date</label>
+                        <input readonly class="form-control" id="end_date" value="{{t.end_date}}">
+                    </div>
+                    
+                    <label for="description">Description</label>
+                    <textarea id="description" rows="5" cols="40" readonly >{{t.description}}</textarea>
+                                        
+                </form>
+                {% endfor %}
+                <div class="col-12" style="margin-left: 45%;">
+                    <a href="/user/user_dashboard" class="btn btn-primary" style="width: 10%;"> back </a>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</body>
+</html>
