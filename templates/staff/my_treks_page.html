@@ -86,8 +86,8 @@
                             <td>{{t.available_slots}}</td>
                             <td>{{t.tatus}}</td>
                             <td>
-                                
-                                <a href="/staff/trek_detail/{{t.id}}" class="btn btn-primary btn-sm">View</a>
+                                <a href="/staff/trekker/{{ trek.id }}"class="btn btn-success btn-sm">Participants</a>
+                                <a href="/staff/trek_edit/{{t.id}}" class="btn btn-primary btn-sm">Edit</a>
                             </td>
                         </tr>
                         {% endfor %}

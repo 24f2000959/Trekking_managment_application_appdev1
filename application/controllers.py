@@ -698,6 +698,57 @@ def staff_dashboard():
     return render_template("staff/staff_dashboard.html", this_user=this_user, )
 
 
+# XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|profile page|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+@app.route("/staff/profile_page")
+def profile_page():
+    if "user_id" not in session:
+        flash("login first")
+        return redirect("/login_page")
+    
+    if session.get("role") != "staff":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    this_user=User.query.filter_by(id=session.get("user_id")).first()
+    if this_user is None:
+        session.clear()
+        flash("please login again")
+        return redirect("/login_page")
+    
+    return render_template("/staff/profile_page.html" , this_user=this_user)
+
+# ----------------------|edit profle|-----------------------------
+@app.route("/staff/edit_profile/<int:u_id>" ,methods=["GET", "POST"])
+def edit_profile(u_id):
+    if "user_id" not in session:
+        flash("first login")
+        return redirect("/login_page")
+    
+    if session.get("role") != "staff":
+        flash("Unauthorized Access")
+        return redirect("/login_page")
+    
+    this_user = User.query.filter_by(id=session.get("user_id")).first()
+    if this_user is None:
+        session.clear()
+        flash("please login again")
+        return redirect("/login_page")
+    
+    if request.method=="POST":
+        this_user.user_name = request.form.get("name")
+        this_user.email = request.form.get("email")
+        this_user.password = request.form.get("password")
+
+        if not this_user.user_name or not this_user.email or not this_user.password:
+            flash("please fill all the required fields")
+            return redirect(f"/staff/edit_profile/{u_id}")
+        
+        db.session.commit()
+        return redirect("/staff/profile_page")
+
+    return render_template("/staff/edit_profile.html", this_user=this_user)
+
+
 # XXXXXXXXXXXXXXXXXXXXXXxxxxx|my trek|XXXXXXXXXXXXXXXXXXXXXXX
 @app.route("/staff/my_treks_page")
 def my_treks_page():
