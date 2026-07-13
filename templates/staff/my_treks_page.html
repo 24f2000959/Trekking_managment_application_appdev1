@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>user dashboard</title>
+    <title>staff dashboard</title>
 
-    <link rel="stylesheet" href="/static/stylesheets/user/tabel_page.css">
+    <link rel="stylesheet" href="/static/stylesheets/staff/tabel_page.css">
 
     <!-- adding bootstrap -->    
             <!-- adding icons boostrap -->
@@ -31,8 +31,8 @@
                 </div>
                 <div class="content">
                     <div class="options">
-                        <a href="/user/user_dashboard" >Dashboard</a>
-                        <a href="/user/trek_page" class="active-menu">Treks</a>
+                        <a href="/staff/user_dashboard" >Dashboard</a>
+                        <a href="/staff/my_treks_page" class="active-menu">My Treks</a>
                         <a href="/user/bookings_history">History</a>
                         <a href="/user/profile_page">Profile</a>
                     </div>
@@ -73,7 +73,7 @@
                             <th scope="col">Difficulty</th>
                             <th scope="col">Location</th>
                             <th scope="col">Available Slots</th>
-                            <th scope="col">detail</th>
+                            <th scope="col">status</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -84,15 +84,10 @@
                             <td>{{t.difficulty}}</td>
                             <td>{{t.location}}</td>
                             <td>{{t.available_slots}}</td>
+                            <td>{{t.tatus}}</td>
                             <td>
-                                <a href="/user/trek_info/{{t.id}}" class="btn btn-info">Trek Info</a>
-                            </td>
-                            <td>
-                                {% if t.available_slots > 0 and t.status == "open" %}
-                                    <a href="/user/trek_book/{{t.id}}" class="btn btn-success">Book</a>
-                                {% else %}
-                                    <a class="btn btn-secondary btn-sm" disabled>Closed</a>
-                                {% endif %}
+                                
+                                <a href="/staff/trek_detail/{{t.id}}" class="btn btn-primary btn-sm">View</a>
                             </td>
                         </tr>
                         {% endfor %}
