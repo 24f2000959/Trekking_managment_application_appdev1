@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <title>admin dashboard</title>
-    <link rel="stylesheet" href="/static/stylesheets/admin/treks_page.css">
+    <link rel="stylesheet" href="/static/stylesheets/admin/tabel_page.css">
 
     <!-- adding bootstrap -->    
         <!-- Bootstrap Icons -->
@@ -37,17 +37,22 @@
                 <!-- --------------------------------------------top part ----------------------------------------------------- -->
                 <div id="top_part">
                     <h1>Dashboard</h1>
-                    <div class="btn">
-                        <i class="bi bi-three-dots"></i>
+                    <div class="extra">
+                        ...
                     </div>
                 </div>
-                
+                <!-- -------------------------------------------------search part-------------------------- -->
+                <div id="search">
+                    <input type="text" placeholder="search by name or id">
+                    <button type="button" class="btn btn-primary" style="border-radius: 20px;">search</button>
+                </div>
+                <div id="flash-card">
+                    {% for msg in get_flashed_messages() %}
+                        {{ msg }}
+                    {% endfor %}
+                </div>
                 <!-- --------------------------------------------main part------------------------------------------------ -->
                 <div id="content" >
-                    <!-- search box -->
-                    <div class="search">
-                        <input type="text" placeholder="search by name or id">
-                    </div>
                     <div id="table">
                         <table class="table table-success table-striped" >
                             <thead >
