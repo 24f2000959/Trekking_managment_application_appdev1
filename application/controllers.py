@@ -16,8 +16,10 @@ def landing_page():
     session.clear()
     return render_template("landing_page.html")
 
-# ===================================================signin=================================================================
 
+# =====================================================================================================================
+# ===================================================signin=================================================================
+# ===================================================================================================================
 @app.route('/signin_page' ,methods=["GET","POST"])
 def signin():
     if request.method == "POST":
@@ -62,8 +64,11 @@ def signin():
     return render_template("signin_page.html")
 
 
-# ===================================================lognin=================================================================
 
+
+# ====================================================================================================================
+# ===================================================|lognin|=================================================================
+#=======================================================================================================================
 @app.route('/login_page',methods=["GET","POST"])
 def login():
     if request.method == 'POST':
@@ -109,8 +114,9 @@ def login():
 
 
 
-
-# ===================================================admin=================================================================
+# ==========================================================================================================================
+# ===================================================|admin|=================================================================
+# ==============================================================================================================================
 @app.route("/admin/admin_dashboard")
 def admin_dashboard():
     if "user_id" not in session:
@@ -143,7 +149,7 @@ def admin_dashboard():
                             total_bookings=total_bookings)
 
 
-#bookingsXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|bookings|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 @app.route("/admin/bookings_page")
 def bookings_page():
     if "user_id" not in session:
@@ -162,7 +168,8 @@ def bookings_page():
     bookings=Booking.query.all()
 
     return render_template("/admin/bookings_page.html", bookings=bookings)
-#treksXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+#XXXXXXXXXXXXXXXXXXXXXXXXXXXX|treks|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 @app.route("/admin/treks_page")
 def treks_page():
 
@@ -183,10 +190,9 @@ def treks_page():
     treks=Trek.query.all()
     return render_template("/admin/treks_page.html", treks=treks, this_user=this_user)
 
-# add trek
+# ----------------------|add trek|----------------------
 @app.route("/admin/add_trek",methods=["GET","POST"])
 def add_trek():
-    #authentication
     if "user_id" not in session:
         flash("first login")
         return redirect("/login_page")
@@ -212,7 +218,6 @@ def add_trek():
         description = request.form.get("description")
         status = request.form.get("status")
 
-        #validation
         if not trek_name or not location or not difficulty or not duration or  not total_slots or not start_date or not end_date or not description or not status or not staff_id:
             flash("fill all fields")
             return redirect("/admin/add_trek")
@@ -260,7 +265,7 @@ def add_trek():
     
 
 
-#edit trek
+#-----------|edit trek|----------------------
 @app.route("/admin/edit_trek/<int:trek_id>", methods=["GET","POST"])
 def edit_trek(trek_id):
     
@@ -304,7 +309,7 @@ def edit_trek(trek_id):
     staffs = User.query.filter_by(role="staff",status="approve").all()
     return render_template("/admin/edit_trek.html",staffs=staffs,treks=treks)
 
-#delete trek
+#-----------------|delete trek|------------------
 @app.route("/admin/delete_trek/<int:trek_id>")
 def delete_edit(trek_id):
     if "user_id" not in session:
@@ -333,7 +338,7 @@ def delete_edit(trek_id):
     return redirect("/admin/treks_page")
 
 
-#staffXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+#XXXXXXXXXXXXXxxxxxxxxxx|staff|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 @app.route("/admin/staff_page")
 def staff_page():
     if "user_id" not in session:
@@ -354,7 +359,7 @@ def staff_page():
     return render_template("/admin/staff_page.html", staffs=staffs, this_user=this_user)
 
 
-# approve staff
+# ------------------|approve staff|------------------------------
 @app.route("/admin/approve_staff/<int:staff_id>")
 def approve_staff(staff_id):
     if "user_id" not in session:
@@ -375,7 +380,7 @@ def approve_staff(staff_id):
     return redirect("/admin/staff_page")
 
 
-# balcklist staff
+# --------------------|balcklist staff|---------------
 @app.route("/admin/blacklist_staff/<int:staff_id>")
 def blacklist_staff(staff_id):
     if "user_id" not in session:
@@ -396,7 +401,7 @@ def blacklist_staff(staff_id):
 
 
 
-# userXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+# XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|user|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 @app.route("/admin/user_page")
 def user_page():
     if "user_id" not in session:
@@ -416,7 +421,7 @@ def user_page():
     return render_template("/admin/user_page.html",users=users, this_user=this_user)
 
 
-#approve user
+#----------------|approve user|------------------------
 @app.route("/admin/approve_user/<int:user_id>")
 def approve_user(user_id):
     if "user_id" not in session:
@@ -435,7 +440,7 @@ def approve_user(user_id):
         db.session.commit()
     return redirect("/admin/user_page")
 
-#blacklist user
+#----------|blacklist user|----------------
 @app.route("/admin/blacklist_user/<int:user_id>")
 def blacklist_user(user_id):
     if "user_id" not in session:
@@ -455,7 +460,12 @@ def blacklist_user(user_id):
     return redirect("/admin/user_page")
 
 
-# ===================================================User=================================================================
+
+
+
+# ==========================================================================================================================
+# ===================================================|User|=================================================================
+# =========================================================================================================================
 @app.route("/user/user_dashboard")
 def user_dashboard():
     if "user_id" not in session:
@@ -477,7 +487,7 @@ def user_dashboard():
     user_bookings = Booking.query.filter_by(user_id=this_user.id,booking_status="booked").all()
     return render_template("user_dashboard.html", this_user=this_user, treks=treks, user_bookings=user_bookings)
 
-# profile pageXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+# XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|profile page|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 @app.route("/user/profile_page")
 def profile_page():
     if "user_id" not in session:
@@ -496,7 +506,7 @@ def profile_page():
     
     return render_template("/user/profile_page.html" , this_user=this_user)
 
-# edit profle
+# ----------------------|edit profle|-----------------------------
 @app.route("/user/edit_profile/<int:u_id>" ,methods=["GET", "POST"])
 def edit_profile(u_id):
     if "user_id" not in session:
@@ -527,7 +537,7 @@ def edit_profile(u_id):
 
     return render_template("/user/edit_profile.html", this_user=this_user)
 
-#trek pageXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|trek page|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 @app.route("/user/trek_page")
 def trek_page():
     if "user_id" not in session:
@@ -546,7 +556,7 @@ def trek_page():
     trek = Trek.query.filter_by(status="open").all()
     return render_template("/user/treks_page.html" ,trek=trek)
 
-# trek info
+# ------------- trek info ---------------------
 @app.route("/user/trek_info/<int:trek_id>")
 def trek_info(trek_id):
     if "user_id" not in session:
@@ -568,7 +578,7 @@ def trek_info(trek_id):
         return redirect("/user/trek_page")
     return render_template("/user/trek_info.html",trek=trek)
 
-#trek booking
+#---------trek booking-------------
 @app.route("/user/trek_book/<int:trek_id>")
 def trek_book(trek_id):
     if "user_id" not in session:
@@ -607,7 +617,7 @@ def trek_book(trek_id):
     flash("trek booked successfully")
     return redirect("/user/trek_page")
 
-# bookings XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
+# XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX bookings XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
 @app.route("/user/booking_history")
 def booking_history():
     if "user_id" not in session:
@@ -626,7 +636,7 @@ def booking_history():
     booking= Booking.query.filter_by(user_id=this_user.id).all()
     return render_template("/user/booking_history.html", booking=booking)
 
-# cancel booking
+# ----cancel booking----
 @app.route("/user/cancel_booking/<int:booking_id>")
 def cancel_booking(booking_id):
     if "user_id" not in session:
@@ -660,7 +670,11 @@ def cancel_booking(booking_id):
 
 
 
-# ===================================================staff=================================================================
+
+
+# ============================================================================================================================
+# =================================================== |staff|=================================================================
+# =============================================================================================================================
 @app.route("/staff/staff_dashboard")
 def staff_dashboard():
 
@@ -672,11 +686,11 @@ def staff_dashboard():
         flash("Unauthorized Access")
         return redirect("/login_page")
     
-    user_id = session.get("user_id")  #session["user_id"] gives error if not in cookie 
+    user_id = session.get("user_id")  
     this_user = User.query.filter_by(id=user_id).first()
 
     if this_user is None :
-        session.clear()   #sometimes session is still present in cookies 
+        session.clear()   
         flash("first login")
         return redirect("login_page")
     
@@ -685,7 +699,13 @@ def staff_dashboard():
     return render_template("staff/staff_dashboard.html", this_user=this_user, treks=treks, bookings=bookings)
 
 
-# ===================================================logout=================================================================
+
+
+
+
+# ===========================================================================================================================
+# ===================================================|logout|=================================================================
+# =========================================================================================================================
 @app.route("/logout")
 def logout():
 
