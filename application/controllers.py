@@ -163,12 +163,20 @@ def admin_dashboard():
     approve_user = User.query.filter_by(role="user",status="approve").count() 
     total_bookings = Booking.query.count()
 
-    # pie chart
-    hard_trek_per = Trek.query.filter_by(difficulty="hard").count()/Trek.query.count()
-    moderate_trek_per = Trek.query.filter_by(difficulty="moderate").count()/Trek.query.count()
-    easy_trek_per = Trek.query.filter_by(difficulty="easy").count()/Trek.query.count()
+    if Trek.query.count() <= 0 or User.query.filter_by(role="staff").count <=0:
+        return render_template("admin/admin_dashboard.html",this_user=this_user,
+                            total_treks=total_treks, 
+                            total_users = total_users,
+                            total_staff = total_staff,
+                            pending_staff=pending_staff,
+                            total_bookings=total_bookings,
+                            approve_staff=approve_staff,
+                            blacklist_staff=blacklist_staff,
+                            approve_user=approve_user,
+                            blacklist_user=blacklist_user,
+                           )
 
-    
+    #barchart------------ 
     labels = ["Pending", "Approved", "Blacklisted"]
     sizes = [pending_staff, approve_staff, blacklist_staff]
     color = ["brown", "darkgreen", "orange"]
@@ -180,6 +188,14 @@ def admin_dashboard():
     plt.title("Staff status")
     plt.savefig("static/images/admin_bar.png")
     plt.close()
+
+    # pie chart------------------
+    hard_trek_per = Trek.query.filter_by(difficulty="hard").count()
+    moderate_trek_per = Trek.query.filter_by(difficulty="moderate").count()
+    easy_trek_per = Trek.query.filter_by(difficulty="easy").count()
+    labels = ["Moderate", "Easy", "Hard"]
+    sizes = [moderate_trek_per, easy_trek_per, hard_trek_per]
+    color = ["brown", "darkgreen", "orange"]
 
     plt.figure(figsize=(6,3))
     plt.pie(sizes,labels=labels, colors=color, autopct="%1.1f%%")
@@ -895,7 +911,7 @@ def staff_dashboard():
     sizes = participants
     color = ["orange", "darkgreen", "brown"]
 
-    plt.figure(figsize=(10,4))
+    plt.figure(figsize=(11,6))
     plt.barh(labels, sizes, color=color)
     plt.title("Trekkers on each treks")
     plt.savefig("static/images/staff_bar_1.png")
