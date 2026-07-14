@@ -18,8 +18,17 @@ from .models import *
 @app.route("/")
 def landing_page():
     session.clear()
-    return render_template("landing_page.html")
+    trek = Trek.query.all()
+    return render_template("landing_page.html", trek=trek)
 
+@app.route("/landing/search", methods=["GET"])
+def landing_search():
+    keyword = request.args.get("search")
+    if not keyword:
+        trek = Trek.query.all()
+    trek = Trek.query.filter((Trek.trek_name.ilike(f"%{keyword}%"))).all()
+    return render_template("landing_page.html", trek=trek)
+    
 
 # =====================================================================================================================
 # ===================================================signin=================================================================

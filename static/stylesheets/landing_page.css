@@ -152,8 +152,8 @@ body{
 }
 
 #cardsinnerpart .c_1{
-    background:#1E3A34;
-    color: white;
+    background:white;
+    color: black;
     height: 300px;
     width: 200px;
     margin: 5px;
@@ -162,51 +162,7 @@ body{
     flex-shrink: 0;
     box-shadow:0 6px 20px rgba(0,0,0,0.15);
 }
-#cardsinnerpart .c_2{
-    background:#1E3A34;
-    color: white;
-    height: 300px;
-    width: 200px;
-    margin: 5px;
-    border-radius: 30px;
-    padding: 50px;
-    flex-shrink: 0;
-    box-shadow:0 6px 20px rgba(0,0,0,0.15);
 
-}
-#cardsinnerpart .c_3{
-    background-color: blue;
-    height: 300px;
-    width: 300px;
-    margin: 5px;
-    border-radius: 30px;
-    padding: 10px;
-    flex-shrink: 0;
-    box-shadow:0 6px 20px rgba(0,0,0,0.15);
-
-}
-#cardsinnerpart .c_4{
-    background-color: blue;
-    height: 300px;
-    width: 300px;
-    margin: 5px;
-    border-radius: 30px;
-    padding: 10px;
-    flex-shrink: 0;
-    box-shadow:0 6px 20px rgba(0,0,0,0.15);
-
-}
-#cardsinnerpart .c_5{
-    background-color: blue;
-    height: 300px;
-    width: 300px;
-    margin: 5px;
-    border-radius: 30px;
-    padding: 10px;
-    flex-shrink: 0;
-    box-shadow:0 6px 20px rgba(0,0,0,0.15);
-
-}
 
 /* ----------------------------------------footer part---------------------------------------------------------------------- */
 #footer{
