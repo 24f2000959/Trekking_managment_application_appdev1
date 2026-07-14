@@ -723,11 +723,13 @@ def user_edit_profile(u_id):
         return redirect("/login_page")
     
     if request.method=="POST":
-        this_user.password = request.form.get("password")
+        new_password = request.form.get("password", "").strip()
 
-        if not this_user.password:
-            flash("please fill all the required fields")
+        if not new_password:
+            flash("Please enter a password.")
             return redirect(f"/user/user_edit_profile/{u_id}")
+
+        this_user.password = new_password
         
         db.session.commit()
         return redirect("/user/user_profile_page")
@@ -983,11 +985,13 @@ def staff_edit_profile(s_id):
         return redirect("/login_page")
     
     if request.method=="POST":
-        this_user.password = request.form.get("password")
+        new_password = request.form.get("password", "").strip()
 
-        if not this_user.password:
-            flash("please fill all the required fields")
+        if not new_password:
+            flash("Please enter a password.")
             return redirect(f"/staff/staff_edit_profile/{s_id}")
+
+        this_user.password = new_password
         
 
         db.session.commit()
