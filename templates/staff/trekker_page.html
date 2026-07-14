@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>user dashboard</title>
+    <title>staff dashboard</title>
 
     <link rel="stylesheet" href="/static/stylesheets/staff/tabel_page.css">
 
@@ -24,7 +24,7 @@
             <div id="left_part">
                 <div class="logo">
                     <i class="bi bi-file-person"></i>
-                    <h1>User</h1>
+                    <h1>Staff</h1>
                 </div>
                 <div class="line">
                 </div>
@@ -54,7 +54,7 @@
 
                 <!-- ---------------------------search box--------------------------------- -->
                  <div id="search" style="padding-left: 380px;">
-                    <h1>staff : {{this_user.user_name}}</h1>
+                    <h1>Staff Assigned: {{this_user.user_name}}</h1>
                 </div>
                 <div class="flash-card">
                     {% for msg in get_flashed_messages() %}
@@ -63,7 +63,6 @@
                 </div>
                 <!-- ---------------------------content------------------------------------- -->
                 <div id="content">
-                    <h2>trekker:{{trek.trek_name}}</h2>
                     <table class="table table-striped">
                     <thead>
                         <tr>

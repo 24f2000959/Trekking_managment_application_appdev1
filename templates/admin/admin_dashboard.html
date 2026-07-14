@@ -86,11 +86,11 @@
                                         <div class="trecks_inner1">
                                             <div class="trecks_inner2" style="font-weight:bolder ;">
                                                 approved
-                                                <p style="color: grey;">number</p>
+                                                <p style="color: grey;">{{approve_user}}</p>
                                             </div>
                                             <div style="font-weight:bolder ;">
-                                                pending
-                                                <p style="color: grey;">number</p>
+                                                Blacklisted
+                                                <p style="color: grey;">{{blacklist_user}}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -99,11 +99,11 @@
                                         <div class="treckkers_inner1">
                                             <div class="treckkers_inner2" style="font-weight:bolder ;">
                                                 active
-                                                <p style="color: grey;">{{ active_staff }}</p>
+                                                <p style="color: grey;">{{ approve_staff }}</p>
                                             </div>
                                             <div class="treckkers_inner2" style="font-weight:bolder ;">
                                                 blacklisted
-                                                <p style="color: grey;">{{ blacklisted_staff }}</p>
+                                                <p style="color: grey;">{{ blacklist_staff }}</p>
                                             </div>
                                             <div style="font-weight:bolder ;">
                                                 pending
@@ -119,24 +119,12 @@
                     <div class="card_section_2">
                         <!-- section 2 card 1 bar chart -->
                         <div class="c_1"> 
-                                card 1
+                                <img src="/static/images/admin_bar.png" alt="Bar Graph">
                         </div>
                         <!-- section 2 card 2 pie chart -->
                         <div class="c_2">
-                            <h2>Trek Analytics</h2>
-                            <div 
-                                class="pie-chart"
-                                style="background : conic-gradient(
-                                                                    rgb(90, 177, 90) 0% 10%,
-                                                                    rgb(206, 166, 91) 10% 50%,
-                                                                    rgb(204, 108, 108) 50% 100%);">
-                                                                </div>
-                                <div class="labels">
-                                    <p><span class="green"></span> Confirmed</p>
-                                    <p><span class="orange"></span> Pending</p>
-                                    <p><span class="red"></span> Cancelled</p>
-                                </div>
-                            </div>
+                            
+                             <img src="/static/images/admin_pie.png" alt="Bar Graph">
                         </div>
                     </div>
                     <!-- footer -->

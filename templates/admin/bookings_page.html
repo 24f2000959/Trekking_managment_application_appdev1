@@ -66,11 +66,11 @@
                         <tbody>
                         {% for b in bookings %}
                             <tr>
-                                <td>{{ b.user_id.user_name }}</td>
-                                <td>{{ b.trek_id.trek_name}}</td>
-                                <td>{{ b.trek_id.difficulty }}</td>
-                                <td>{{ b.status }}</td>
-                                <td>{{ b.status }}</td>
+                                <td>{{ b.user.user_name }}</td>
+                                <td>{{ b.trek.trek_name}}</td>
+                                <td>{{ b.trek.difficulty }}</td>
+                                <td>{{ b.booking_date }}</td>
+                                <td>{{ b.booking_status }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>

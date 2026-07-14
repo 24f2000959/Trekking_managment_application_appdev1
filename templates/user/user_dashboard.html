@@ -55,27 +55,24 @@
                 <div id="content">
                     <!-- ------card section_1 -->
                     <div class="card_section_1">
-                        <div class="c_1">
-                                <h1>Welcome {{this_user.name}}</h1>
-                                <h3>to wheels treeking app </h3>
+                        <div class="c_1" style="padding-left: 20px;padding-top: 20px;">
+                               <h3 style="color: grey;">Welcome back</h3>
+                                <h1>{{this_user.user_name}}</h1>
+                                <p style="color: grey;">{{this_user.date}}</p>
                         </div>
-                        <div class="c_2">
-                                card 2
+                        <div class="c_2" style="padding-left: 50px;padding-top: 20px;">
+                                <h2 style="text-decoration: dotted;color: grey;">Available Treks</h2>
+                                <h1 style="padding-left: 60px;">{{treks}}</h1>
                         </div>
-                        <div class="c_3">
-                                card 3
+                        <div class="c_3" style="padding-left: 40px;padding-top: 20px;">
+                                <h2 style="color: grey;">My Bookings</h2>
+                                <h1 style="padding-left: 60px;">{{user_bookings}}</h1>
                         </div>
                     </div>
                     <!-- -------car_Section_2-- -->
                      <div class="card_section_2">
                         <div class="c_1">
-                            card 1
-                        </div>
-                     </div>
-                     <!-- -------car_Section_3-- -->
-                     <div class="card_section_3">
-                        <div class="c_1">
-                            card 1
+                            <img src="/static/images/user_bar.png" alt="Bar chart">
                         </div>
                      </div>
                 </div>

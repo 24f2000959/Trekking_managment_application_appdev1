@@ -1,5 +1,9 @@
 from flask import Flask, render_template, redirect, request, url_for, flash, session
 from datetime import datetime
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+
 
 from flask import current_app as app
 # we cannot do somethign like this 
@@ -144,14 +148,49 @@ def admin_dashboard():
     total_users = User.query.filter_by(role="user").count()
     total_staff = User.query.filter_by(role="staff").count()
     pending_staff = User.query.filter_by(role="staff",status="pending").count()
+    blacklist_staff = User.query.filter_by(role="staff",status="blacklist").count() 
+    approve_staff = User.query.filter_by(role="staff",status="approve").count() 
+    blacklist_user = User.query.filter_by(role="user",status="blacklist").count() 
+    approve_user = User.query.filter_by(role="user",status="approve").count() 
     total_bookings = Booking.query.count()
+
+    # pie chart
+    hard_trek_per = Trek.query.filter_by(difficulty="hard").count()/Trek.query.count()
+    moderate_trek_per = Trek.query.filter_by(difficulty="moderate").count()/Trek.query.count()
+    easy_trek_per = Trek.query.filter_by(difficulty="easy").count()/Trek.query.count()
+
+    
+    labels = ["Pending", "Approved", "Blacklisted"]
+    sizes = [pending_staff, approve_staff, blacklist_staff]
+    color = ["brown", "darkgreen", "orange"]
+    
+    plt.figure(figsize=(5,4))
+    plt.bar(labels, sizes, color=color)
+    # plt.yticks([])
+    # plt.barh(labels, sizes, color=color)
+    plt.title("Staff status")
+    plt.savefig("static/images/admin_bar.png")
+    plt.close()
+
+    plt.figure(figsize=(6,3))
+    plt.pie(sizes,labels=labels, colors=color, autopct="%1.1f%%")
+    plt.title("trek analytics")
+    plt.savefig("static/images/admin_pie.png")
+    plt.close()
 
     return render_template("admin/admin_dashboard.html",this_user=this_user,
                             total_treks=total_treks, 
                             total_users = total_users,
                             total_staff = total_staff,
                             pending_staff=pending_staff,
-                            total_bookings=total_bookings)
+                            total_bookings=total_bookings,
+                            approve_staff=approve_staff,
+                            blacklist_staff=blacklist_staff,
+                            approve_user=approve_user,
+                            blacklist_user=blacklist_user,
+                            hard_trek_per=hard_trek_per,
+                            moderate_trek_per=moderate_trek_per,
+                            easy_trek_per=easy_trek_per)
 
 
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|bookings|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -469,8 +508,9 @@ def admin_search_staff():
         return redirect("/login_page")
     
     keyword = request.args.get("search","").strip()
+    if not keyword:
+        return redirect("/admin/staff_page")
     staffs=User.query.filter(
-                              User.role =="staff",
                               (User.user_name.ilike(f"%{keyword}%"))
                             ).all()
     return render_template("/admin/staff_page.html", staffs=staffs, this_user=this_user)
@@ -551,8 +591,9 @@ def admin_search_user():
         return redirect("/login_page")
     
     keyword=request.args.get("search","").strip()
+    if not keyword:
+        return redirect("/admin/user_page")
     users=User.query.filter(
-                            User.role == "user",
                             (User.user_name.ilike(f"%{keyword}%"))
                             ).all()
     return render_template("/admin/user_page.html",users=users, this_user=this_user)
@@ -583,8 +624,22 @@ def user_dashboard():
         flash("please login again!")
         return redirect("/login_page")
     
-    treks = Trek.query.filter_by(status="open").all()
-    user_bookings = Booking.query.filter_by(user_id=this_user.id,booking_status="booked").all()
+    treks = Trek.query.filter_by(status="open").count()
+    user_bookings = Booking.query.filter_by(user_id=this_user.id,booking_status="booked").count()
+
+    easy = Trek.query.filter_by(difficulty="easy").count()
+    hard = Trek.query.filter_by(difficulty="hard").count()
+    moderate = Trek.query.filter_by(difficulty="moderate").count()
+    labels = ["easy", "moderate", "hard"]
+    sizes = [easy, moderate, hard]
+    color = ["brown", "darkgreen", "orange"]
+
+    plt.figure(figsize=(12, 5))
+    plt.barh(labels, sizes, color=color)
+    plt.title("Difficulty of number of treks")
+    plt.savefig("static/images/user_bar.png")
+    plt.close()
+
     return render_template("/user/user_dashboard.html", this_user=this_user, treks=treks, user_bookings=user_bookings)
 
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|profile page|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -816,8 +871,27 @@ def staff_dashboard():
         flash("first login")
         return redirect("login_page")
     
+    trek=Trek.query.filter_by(staff_id=this_user.id).count()
+
+    assigned_treks = Trek.query.filter_by(staff_id=this_user.id).all()
+    total_participants = 0
+    trek_names=[]
+    participants=[]
+    for trek in assigned_treks:
+        total_participants += Booking.query.filter_by(trek_id=trek.id).count()
+        trek_names.append(trek.trek_name)
+        participants.append(len(trek.bookings))
+
+    labels = trek_names
+    sizes = participants
+    color = ["orange", "darkgreen", "brown"]
+
+    plt.figure(figsize=(10,4))
+    plt.barh(labels, sizes, color=color)
+    plt.savefig("static/images/staff_bar_1.png")
+    plt.close()
    
-    return render_template("staff/staff_dashboard.html", this_user=this_user, )
+    return render_template("staff/staff_dashboard.html", this_user=this_user,trek=trek, total_participants=total_participants )
 
 
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|profile page|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

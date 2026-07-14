@@ -326,34 +326,6 @@ transform: translateY(-30px);
     padding-left: 13px;
 }
 
-.pie-chart{
-    width:250px;
-    height:230px;
-    border-radius:50%;
-
-    margin:auto;
-    box-shadow:0 4px 10px rgba(0,0,0,0.2);
-}
-
-.labels span{
-    display:inline-block;
-    width:15px;
-    height:15px;
-    border-radius:50%;
-    margin-right:10px;
-}
-
-.green{
-    background:#22c55e;
-}
-
-.orange{
-    background:#f59e0b;
-}
-
-.red{
-    background:#ef4444;
-}
 
 /* ----------------------fottre ------------------- */
 .footer{

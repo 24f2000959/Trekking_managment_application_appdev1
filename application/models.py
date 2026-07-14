@@ -28,7 +28,7 @@ class Trek(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     trek_name = db.Column(db.String(), nullable=False)
     location = db.Column(db.String(), nullable=False)
-    difficulty = db.Column(db.String(), nullable=False)
+    difficulty = db.Column(db.String(), nullable=False) #hard easy moderate
     duration = db.Column(db.Integer, nullable=False)
     total_slots = db.Column(db.Integer, nullable=False)
     available_slots = db.Column(db.Integer, nullable=False)
