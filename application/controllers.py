@@ -888,6 +888,7 @@ def staff_dashboard():
 
     plt.figure(figsize=(10,4))
     plt.barh(labels, sizes, color=color)
+    plt.title("Trekkers on each treks")
     plt.savefig("static/images/staff_bar_1.png")
     plt.close()
    
