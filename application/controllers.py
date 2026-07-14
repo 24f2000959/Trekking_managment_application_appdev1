@@ -26,7 +26,8 @@ def landing_search():
     keyword = request.args.get("search")
     if not keyword:
         trek = Trek.query.all()
-    trek = Trek.query.filter((Trek.trek_name.ilike(f"%{keyword}%"))).all()
+    else:
+        trek = Trek.query.filter((Trek.trek_name.ilike(f"%{keyword}%"))).all()
     return render_template("landing_page.html", trek=trek)
     
 
@@ -87,11 +88,17 @@ def login():
     if request.method == 'POST':
         email = request.form.get("email_id")
         pwd = request.form.get("pwd")
+
+        if not email or not pwd:
+            flash("Please fill all fields.")
+            return redirect("/login_page")
+        
         this_user = User.query.filter_by(email=email).first()
 
         if this_user is None:
             flash("first signin your account")
             return redirect("/login_page")
+        
 
 
         if this_user.password != pwd:
@@ -105,6 +112,7 @@ def login():
         if this_user.role == "user" and this_user.status == "blacklist":
             flash("admin blacklisted your account")
             return redirect("/login_page")
+        
 
         #storing info in sessions
         session["user_id"] = this_user.id
@@ -163,7 +171,7 @@ def admin_dashboard():
     approve_user = User.query.filter_by(role="user",status="approve").count() 
     total_bookings = Booking.query.count()
 
-    if Trek.query.count() <= 0 or User.query.filter_by(role="staff").count <=0:
+    if Trek.query.count() <= 0 or User.query.filter_by(role="staff").count() <=0:
         return render_template("admin/admin_dashboard.html",this_user=this_user,
                             total_treks=total_treks, 
                             total_users = total_users,
@@ -364,8 +372,19 @@ def edit_trek(trek_id):
         treks.trek_name = request.form.get("trek_name")
         treks.location = request.form.get("location")
         treks.difficulty = request.form.get("difficulty")
-        treks.duration = request.form.get("duration")
-        treks.total_slots = request.form.get("total_slots")
+        treks.duration = int(request.form.get("duration"))
+
+        new_total_slots = int(request.form.get("total_slots"))
+
+        booked_slots = treks.total_slots - treks.available_slots
+
+        if new_total_slots < booked_slots:
+            flash(f"At least {booked_slots} slots are required because users have already booked.")
+            return redirect(f"/admin/edit_trek/{trek_id}")
+
+        treks.total_slots = new_total_slots
+        treks.available_slots = new_total_slots - booked_slots
+
         treks.start_date = datetime.strptime(request.form.get("start_date"),"%Y-%m-%d").date()
         treks.end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d").date()
         treks.staff_id = request.form.get("staff_id")
@@ -377,9 +396,9 @@ def edit_trek(trek_id):
             flash("This staff is already assigned to another open trek.")
             return redirect(f"/admin/edit_trek/{trek_id}")
 
-        if datetime.strptime(request.form.get("start_date"),"%Y-%m-%d").date() > datetime.strptime(request.form.get("end_date"), "%Y-%m-%d").date():
-            flash("start date should be less than end date")
-            return redirect("/admin/treks_page")
+        if datetime.strptime(request.form.get("start_date"), "%Y-%m-%d").date() >= datetime.strptime(request.form.get("end_date"), "%Y-%m-%d").date():
+            flash("Start date must be before the end date.")
+            return redirect(f"/admin/edit_trek/{trek_id}")
 
         if int(treks.duration) <= 0:
             flash("Duration must be greater than 0")
@@ -782,6 +801,9 @@ def trek_book(trek_id):
     if trek.available_slots <= 0 :
         flash("no slots available")
         return redirect("/user/trek_page")
+    if trek.end_date < datetime.today().date():
+        flash("This trek has already ended.")
+        return redirect("/user/trek_page")
     
     booking = Booking.query.filter_by(user_id=this_user.id, trek_id=trek.id,booking_status="booked").first()
     if booking:
@@ -812,9 +834,13 @@ def user_search_trek():
         return redirect("/login_page")
     
     keyword=request.args.get("search","").strip()
-    trek=Trek.query.filter(
-                            (Trek.difficulty.ilike(f"%{keyword}%"))|
-                            (Trek.location.ilike(f"%{keyword}%"))
+    trek = Trek.query.filter(
+                                Trek.status == "open",
+                                (
+                                    (Trek.trek_name.ilike(f"%{keyword}%")) |
+                                    (Trek.location.ilike(f"%{keyword}%")) |
+                                    (Trek.difficulty.ilike(f"%{keyword}%"))
+                                )
                             ).all()
     return render_template("/user/treks_page.html" ,trek=trek)
 
@@ -903,16 +929,16 @@ def staff_dashboard():
     trek_names=[]
     participants=[]
     for trek in assigned_treks:
-        total_participants += Booking.query.filter_by(trek_id=trek.id).count()
+        booked = Booking.query.filter_by(trek_id=trek.id,booking_status="booked").count()
+        total_participants += booked
         trek_names.append(trek.trek_name)
-        participants.append(len(trek.bookings))
+        participants.append(booked)
 
     labels = trek_names
     sizes = participants
-    color = ["orange", "darkgreen", "brown"]
 
     plt.figure(figsize=(11,6))
-    plt.barh(labels, sizes, color=color)
+    plt.barh(labels, sizes)
     plt.title("Trekkers on each treks")
     plt.savefig("static/images/staff_bar_1.png")
     plt.close()
@@ -1058,6 +1084,11 @@ def trek_edit(t_id):
             return redirect(f"/staff/trek_edit/{trek.id}")
         if available_slot > trek.total_slots :
             flash("available slots cannot exceede total slots")
+            return redirect(f"/staff/trek_edit/{trek.id}")
+        booked = Booking.query.filter_by(trek_id=trek.id,booking_status="booked").count()
+
+        if booked > 0 and status == "close":
+            flash("You cannot close a trek while participants are still booked.")
             return redirect(f"/staff/trek_edit/{trek.id}")
         
         trek.status = status
