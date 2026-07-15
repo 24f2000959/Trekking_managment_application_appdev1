@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, request, url_for, flash, session
 from .decorators import admin_required, login_required, staff_required, user_required
-from datetime import datetime
+from datetime import datetime, timedelta
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -256,22 +256,23 @@ def add_trek():
         total_slots = request.form.get("total_slots")
 
         start_date = request.form.get("start_date")
-        end_date = request.form.get("end_date")
         start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
-        end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
 
-        duration = (end_date-start_date).days
+        duration = request.form.get("duration")
+        duration = int(duration)
+        end_date = start_date + timedelta(days=duration - 1)
+
         staff_id = request.form.get("staff_id")
         description = request.form.get("description")
         status = request.form.get("status")
         # checking conditions
-        if not trek_name or not location or not difficulty or not duration or  not total_slots or not start_date or not end_date or not description or not status or not staff_id:
+        if not trek_name or not location or not difficulty or not duration or  not total_slots or not start_date or not duration or not description or not status or not staff_id:
             flash("fill all fields")
             return redirect("/admin/add_trek")
         
         existing_staff = Trek.query.filter(
                                                 Trek.staff_id == staff_id,
-                                                Trek.status == "open",
+                                                Trek.status == "Open",
                                                 Trek.start_date <= end_date,
                                                 Trek.end_date >= start_date
                                             ).first()
@@ -288,8 +289,8 @@ def add_trek():
             flash("trek starting date must be greater than todays date")
             return redirect("/admin/add_trek")
         
-        if start_date >= end_date:
-            flash("startdate should be less than enddate")
+        if duration <= 0:
+            flash("Duration must be greater than 0.")
             return redirect("/admin/add_trek")
     
         if int(total_slots) <= 0:
@@ -329,8 +330,8 @@ def edit_trek(trek_id):
         flash("trek not find")
         return redirect("/admin/treks_page")
     
-    if treks.end_date < datetime.today().date():
-        flash("completed treks cannot be edited")
+    if treks.status == "Completed":
+        flash("Completed treks cannot be edited.")
         return redirect("/admin/treks_page")
     
     staffs = User.query.filter_by(role="staff",status="approve").all()
@@ -341,12 +342,19 @@ def edit_trek(trek_id):
         difficulty = request.form.get("difficulty")
         total_slots = request.form.get("total_slots")
         start_date = request.form.get("start_date")
-        end_date = request.form.get("end_date")
+
+        duration = request.form.get("duration")
+        if not duration:
+            flash("Duration is required.")
+            return redirect(f"/admin/edit_trek/{trek_id}")
+
+        duration = int(duration)
+
         description = request.form.get("description")
         status = request.form.get("status")
         staff_id = request.form.get("staff_id")
         # check all fileds are filled or not
-        if not trek_name or not location or not difficulty or  not total_slots or not start_date or not end_date or not description or not status or not staff_id:
+        if not trek_name or not location or not difficulty or  not total_slots or not start_date or not duration or not description or not status or not staff_id:
             flash("fill all fields")
             return redirect(f"/admin/edit_trek/{trek_id}")
 
@@ -363,16 +371,18 @@ def edit_trek(trek_id):
         treks.total_slots = new_total_slots
         treks.available_slots = new_total_slots - booked_slots
 
+
+        if duration <= 0:
+            flash("Duration must be greater than 0.")
+            return redirect(f"/admin/edit_trek/{trek_id}")
         
         start_date = datetime.strptime(start_date,"%Y-%m-%d").date()
-        end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
-        if start_date >= end_date:
-            flash("Start date must be before the end date.")
-            return redirect(f"/admin/edit_trek/{trek_id}")
+        end_date = start_date + timedelta(days=duration - 1)
+
+        treks.duration = duration
         treks.start_date = start_date
         treks.end_date = end_date
         
-        treks.duration = (end_date - start_date).days
         treks.staff_id = int(staff_id)
         treks.description = description
         treks.status = status
@@ -491,7 +501,7 @@ def blacklist_staff(staff_id):
     
     assigned_trek = Trek.query.filter(
                                         Trek.staff_id == staff.id, 
-                                        Trek.status == "open",
+                                        Trek.status == "Open",
                                           Trek.end_date >= datetime.today().date()
                                     ).first()
     if assigned_trek:
@@ -602,8 +612,8 @@ def user_dashboard():
     
     this_user = User.query.filter_by(id=session["user_id"]).first()
     
-    treks = Trek.query.filter_by(status="open").count()
-    user_bookings = Booking.query.filter_by(user_id=this_user.id,booking_status="booked").count()
+    treks = Trek.query.filter_by(status="Open").count()
+    user_bookings = Booking.query.filter_by(user_id=this_user.id,booking_status="Booked").count()
 
     # graph
     easy = Trek.query.filter_by(difficulty="easy").count()
@@ -660,7 +670,7 @@ def trek_page():
     
     this_user = User.query.filter_by(id=session.get("user_id")).first()
     trek = Trek.query.filter(
-                                Trek.status == "open",
+                                Trek.status == "Open",
                                 Trek.end_date >= datetime.today().date()
                             ).all()
 
@@ -691,7 +701,7 @@ def trek_book(trek_id):
     if trek is None:
         flash("trek is not there")
         return redirect("/user/trek_page")
-    if trek.status != "open":
+    if trek.status != "Open":
         flash("thsi trek is not open")
         return redirect("/user/trek_page")
     if trek.available_slots <= 0 :
@@ -701,12 +711,12 @@ def trek_book(trek_id):
         flash("This trek has already ended.")
         return redirect("/user/trek_page")
     
-    booking = Booking.query.filter_by(user_id=this_user.id, trek_id=trek.id,booking_status="booked").first()
+    booking = Booking.query.filter_by(user_id=this_user.id, trek_id=trek.id,booking_status="Booked").first()
     if booking:
         flash("already registered for this trek")
         return redirect("/user/trek_page")
     # creating database
-    new_booking = Booking(user_id=this_user.id, trek_id=trek.id, booking_status="booked")
+    new_booking = Booking(user_id=this_user.id, trek_id=trek.id, booking_status="Booked")
     db.session.add(new_booking)
     trek.available_slots -= 1
     db.session.commit()
@@ -724,7 +734,7 @@ def user_search_trek():
     if not keyword:
         return redirect("/user/trek_page")
     trek = Trek.query.filter(
-                                Trek.status == "open",
+                                Trek.status == "Open",
                                 Trek.end_date >= datetime.today().date(),
                                 (
                                     (Trek.trek_name.ilike(f"%{keyword}%")) |
@@ -754,18 +764,21 @@ def cancel_booking(booking_id):
     
     this_user = User.query.filter_by(id=session.get("user_id")).first()
     
-    booking = Booking.query.filter_by(id=booking_id,user_id=this_user.id,booking_status="booked").first()
+    booking = Booking.query.filter_by(id=booking_id,user_id=this_user.id,booking_status="Booked").first()
     if booking is None:
         flash("this booking is not existed")
         return redirect("/user/booking_history")
     if booking.trek.start_date <= datetime.today().date():
         flash("Booking cannot be cancelled after the trek has started.")
         return redirect("/user/booking_history")
-    if booking.booking_status == "cancel":
+    if booking.trek.status in ["Started", "Ongoing", "Completed"]:
+        flash("Booking cannot be cancelled because the trek has already started.")
+        return redirect("/user/booking_history")
+    if booking.booking_status == "Canceled":
         flash("booking already canceled")
         return redirect("/user/booking_history")
     # creating database
-    booking.booking_status = "cancel"
+    booking.booking_status = "Canceled"
     booking.trek.available_slots += 1
     db.session.commit()
     flash("booking cancelled")
@@ -799,7 +812,7 @@ def staff_dashboard():
     trek_names=[]
     participants=[]
     for trek in assigned_treks:
-        booked = Booking.query.filter_by(trek_id=trek.id,booking_status="booked").count()
+        booked = Booking.query.filter_by(trek_id=trek.id,booking_status="Booked").count()
         total_participants += booked
         trek_names.append(trek.trek_name)
         participants.append(booked)
@@ -873,7 +886,10 @@ def trekker_page(t_id):
         flash("Trek not found")
         return redirect("/staff/my_treks_page")
     
-    booking = Booking.query.filter_by(trek_id=trek.id,booking_status="booked").all()
+    booking = Booking.query.filter(
+                                        Booking.trek_id == trek.id,
+                                        Booking.booking_status != "Cancelled"
+                                    ).all()
 
     return render_template("/staff/trekker_page.html",this_user=this_user, trek=trek, booking=booking)
 
@@ -890,12 +906,23 @@ def trek_edit(t_id):
     if trek is None:
         flash("Trek not found")
         return redirect("/staff/my_treks_page")
-    if trek.end_date < datetime.today().date():
+    if trek.status == "Completed":
         flash("Completed treks cannot be edited.")
         return redirect("/staff/my_treks_page")
     # method-POST
     if request.method=="POST":
         status = request.form.get("status")
+        allowed_transitions = {
+                                "Open": ["Open", "Closed"],
+                                "Closed": ["Closed", "Started"],
+                                "Started": ["Started", "Ongoing"],
+                                "Ongoing": ["Ongoing", "Completed"],
+                                "Completed": ["Completed"]
+                            }
+        if status not in allowed_transitions.get(trek.status, []):
+            flash(f"Cannot change trek status from {trek.status} to {status}.")
+            return redirect(f"/staff/trek_edit/{trek.id}")
+        
         new_total_slots = request.form.get("total_slots")
 
         if not status or not new_total_slots:
@@ -903,7 +930,7 @@ def trek_edit(t_id):
             return redirect(f"/staff/trek_edit/{trek.id}")
         
         new_total_slots = int(new_total_slots)
-        booked = Booking.query.filter_by(trek_id=trek.id,booking_status="booked").count()
+        booked = Booking.query.filter_by(trek_id=trek.id,booking_status="Booked").count()
         if new_total_slots < trek.total_slots:
             flash("You can only increase the total slots.")
             return redirect(f"/staff/trek_edit/{trek.id}")
@@ -912,11 +939,15 @@ def trek_edit(t_id):
             flash(f"At least {booked} slots are required.")
             return redirect(f"/staff/trek_edit/{trek.id}")
         
-        if booked > 0 and status == "close":
-            flash("You cannot close a trek while participants are still booked.")
-            return redirect(f"/staff/trek_edit/{trek.id}")
-        
         trek.status = status
+        if status == "Completed":
+            bookings = Booking.query.filter_by(
+                                                    trek_id=trek.id,
+                                                    booking_status="Booked"
+                                                ).all()
+            for booking in bookings:
+                booking.booking_status = "Completed"
+        
         # updating database
         increase = new_total_slots - trek.total_slots
 

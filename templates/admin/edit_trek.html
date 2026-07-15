@@ -36,7 +36,7 @@
                     </div>
                     <div class="col-md-2">
                         <label for="end_date" class="form-label">Duration</label>
-                        <input readonly class="form-control" id="end_date" value="{{treks.duration}}">
+                        <input type="number" class="form-control" id="end_date" value="{{treks.duration}}" name="duration">
                     </div>
                     <div class="col-md-2">
                         <label for="end_date" class="form-label">Total slots</label>
@@ -59,8 +59,7 @@
                     <div class="col-md-4">
                         <label for="inputState" class="form-label">Status</label>
                         <select id="inputState" class="form-select" name="status">
-                            <option>open</option>
-                            <option>close</option>
+                            <option>Open</option>
                         </select>
                         
                     </div>
@@ -76,10 +75,7 @@
                         <label for="start_date" class="form-label">Start Date</label>
                         <input type="date" class="form-control" id="start_date" name="start_date" value="{{treks.start_date}}">
                     </div>
-                    <div class="col-md-2">
-                        <label for="end_date" class="form-label">End Date</label>
-                        <input type="date" class="form-control" id="end_date" name="end_date" value="{{treks.end_date}}">
-                    </div>
+                    
                     
                     <label for="description">Description</label>
                     <textarea id="description" rows="5" cols="40" placeholder="Enter description here..." name="description" >{{treks.description}}</textarea>

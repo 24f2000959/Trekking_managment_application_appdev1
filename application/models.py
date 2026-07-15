@@ -66,5 +66,5 @@ class Booking(db.Model):
 
     booking_date = db.Column(db.Date, default=date.today)
 
-    booking_status = db.Column(db.String(20), default="booked") #booked cancel
+    booking_status = db.Column(db.String(20), default="Booked") #booked cancel
 

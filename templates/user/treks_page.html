@@ -90,7 +90,7 @@
                                 <a href="/user/trek_info/{{t.id}}" class="btn btn-info">Trek Info</a>
                             </td>
                             <td>
-                                {% if t.available_slots > 0 and t.status == "open" %}
+                                {% if t.available_slots > 0 and t.status == "Open" %}
                                     <a href="/user/trek_book/{{t.id}}" class="btn btn-success">Book</a>
                                 {% else %}
                                     <a class="btn btn-secondary btn-sm" disabled>Closed</a>

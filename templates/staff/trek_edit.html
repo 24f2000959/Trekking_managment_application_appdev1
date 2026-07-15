@@ -34,17 +34,12 @@
                         <div class="col-md-4">
                             <label for="inputState" class="form-label">Status</label>
                             <select id="inputState" class="form-select" name="status">
-                                <option value="open" {% if trek.status == "open" %}selected{% endif %}>
-                                    Open
-                                </option>
-
-                                <option value="close" {% if trek.status == "close" %}selected{% endif %}>
-                                    Close
-                                </option>
-
-                                <option value="complete" {% if trek.status == "complete" %}selected{% endif %}>
-                                    Complete
-                                </option>
+                                <option>Open</option>
+                                <option>Closed</option>
+                                <option>Started</option>
+                                <option>Ongoing</option>
+                                <option>Completed</option>
+                                
                             </select>
                         </div>
                         <div class="col-md-4">
