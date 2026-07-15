@@ -168,6 +168,7 @@ def admin_dashboard():
     approve_user = User.query.filter_by(role="user",status="approve").count() 
     total_bookings = Booking.query.count()
 
+
     if Trek.query.count() <= 0 or User.query.filter_by(role="staff").count() <=0:
         return render_template("admin/admin_dashboard.html",
                                                             this_user=this_user,
@@ -181,7 +182,7 @@ def admin_dashboard():
                                                             approve_user=approve_user,
                                                             blacklist_user=blacklist_user,
                                                         )
-
+    
     #barchart------------ 
     labels = ["Pending", "Approved", "Blacklisted"]
     sizes = [pending_staff, approve_staff, blacklist_staff]
