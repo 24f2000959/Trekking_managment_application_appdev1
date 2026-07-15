@@ -58,7 +58,17 @@ def signin():
             return redirect("/signin_page")
         
         #chechking existing user
+        this_user = User.query.filter_by(user_name=username).first()
+        if this_user:
+            flash("username is takken")
+            return redirect("/signin_page")
+        
         this_user = User.query.filter_by(email=email).first()
+        if this_user:
+            flash("email is takken")
+            return redirect("/signin_page")
+        
+        this_user = User.query.filter_by(user_name=username, email=email).first()
         if this_user:
             flash("already registered")
             return redirect("/signin_page")
@@ -261,7 +271,8 @@ def add_trek():
         existing_staff = Trek.query.filter(
                                                 Trek.staff_id == staff_id,
                                                 Trek.status == "open",
-                                                Trek.end_date >= datetime.today().date()
+                                                Trek.start_date <= end_date,
+                                                Trek.end_date >= start_date
                                             ).first()
         if existing_staff:
             flash("staff is already assigned to another trek")
@@ -271,6 +282,11 @@ def add_trek():
         if existing_trek:
             flash("A trek with the same name and start date already exists.")
             return redirect("/admin/add_trek")
+        
+        if start_date <= datetime.today().date():
+            flash("trek starting date must be greater than todays date")
+            return redirect("/admin/add_trek")
+        
         if start_date >= end_date:
             flash("startdate should be less than enddate")
             return redirect("/admin/add_trek")
@@ -319,28 +335,46 @@ def edit_trek(trek_id):
     staffs = User.query.filter_by(role="staff",status="approve").all()
     # method-POST
     if request.method == "POST":
-        treks.trek_name = request.form.get("trek_name")
-        treks.location = request.form.get("location")
-        treks.difficulty = request.form.get("difficulty")
+        trek_name = request.form.get("trek_name")
+        location = request.form.get("location")
+        difficulty = request.form.get("difficulty")
+        total_slots = request.form.get("total_slots")
+        start_date = request.form.get("start_date")
+        end_date = request.form.get("end_date")
+        description = request.form.get("description")
+        status = request.form.get("status")
+        staff_id = request.form.get("staff_id")
+        # check all fileds are filled or not
+        if not trek_name or not location or not difficulty or  not total_slots or not start_date or not end_date or not description or not status or not staff_id:
+            flash("fill all fields")
+            return redirect(f"/admin/edit_trek/{trek_id}")
 
-        new_total_slots = int(request.form.get("total_slots"))
+        # updating value 
+        treks.trek_name = trek_name
+        treks.location = location
+        treks.difficulty = difficulty
+
+        new_total_slots = int(total_slots)
         booked_slots = treks.total_slots - treks.available_slots
         if new_total_slots < booked_slots:
             flash(f"At least {booked_slots} slots are required because users have already booked.")
             return redirect(f"/admin/edit_trek/{trek_id}")
         treks.total_slots = new_total_slots
+        treks.available_slots = new_total_slots - booked_slots
 
-        start_date = request.form.get("start_date")
-        end_date = request.form.get("end_date")
+        
         start_date = datetime.strptime(start_date,"%Y-%m-%d").date()
         end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+        if start_date >= end_date:
+            flash("Start date must be before the end date.")
+            return redirect(f"/admin/edit_trek/{trek_id}")
         treks.start_date = start_date
         treks.end_date = end_date
-
-        treks.duration = (end_date - start_date).day
-        treks.staff_id = request.form.get("staff_id")
-        treks.description = request.form.get("description")
-        treks.status = request.form.get("status")
+        
+        treks.duration = (end_date - start_date).days
+        treks.staff_id = int(staff_id)
+        treks.description = description
+        treks.status = status
     
         # checking conditions
         existing_staff = Trek.query.filter(
@@ -351,10 +385,6 @@ def edit_trek(trek_id):
                                            ).first()
         if existing_staff:
             flash("This staff is already assigned to another open trek.")
-            return redirect(f"/admin/edit_trek/{trek_id}")
-
-        if datetime.strptime(request.form.get("start_date"), "%Y-%m-%d").date() >= datetime.strptime(request.form.get("end_date"), "%Y-%m-%d").date():
-            flash("Start date must be before the end date.")
             return redirect(f"/admin/edit_trek/{trek_id}")
 
         if int(treks.duration) <= 0:
@@ -487,6 +517,7 @@ def admin_search_staff():
         return redirect("/admin/staff_page")
     
     staffs=User.query.filter(
+                            User.role == "staff",
                             (User.user_name.ilike(f"%{keyword}%"))
                             ).all()
     
@@ -548,6 +579,7 @@ def admin_search_user():
     if not keyword:
         return redirect("/admin/user_page")
     users=User.query.filter(
+                            User.role == "user",
                             (User.user_name.ilike(f"%{keyword}%"))
                             ).all()
     
@@ -688,8 +720,8 @@ def trek_book(trek_id):
 def user_search_trek():
         
     keyword=request.args.get("search","").strip()
-    if keyword is None:
-        return redirect("/user/treks_page")
+    if not keyword:
+        return redirect("/user/trek_page")
     trek = Trek.query.filter(
                                 Trek.status == "open",
                                 Trek.end_date >= datetime.today().date(),

@@ -40,7 +40,7 @@
                     </div>
                     <div class="col-md-2">
                         <label for="end_date" class="form-label">Total slots</label>
-                        <input type="number" class="form-control" id="end_date" name="total_slots" value="treks.total_slots">
+                        <input type="number" class="form-control" id="end_date" name="total_slots" value="{{treks.total_slots}}">
                     </div>
                     
                     <div class="col-12">
@@ -82,7 +82,7 @@
                     </div>
                     
                     <label for="description">Description</label>
-                    <textarea id="description" rows="5" cols="40" placeholder="Enter description here..." name="description" value="{{treks.description}}"></textarea>
+                    <textarea id="description" rows="5" cols="40" placeholder="Enter description here..." name="description" >{{treks.description}}</textarea>
                                         
                     <div class="col-12" style="margin-left: 90%;">
                         <button type="submit" class="btn btn-primary">Edit Trek</button>

@@ -138,7 +138,7 @@ body{
 /*-------------------------------------card section--------------------------------------------------------*/
 #cardsouterpart{
     /* background: #CFE3DD; */
-    background: #EAF4F1;
+    /* background: #EAF4F1; */
     display: flex;
 }
 #cardsinnerpart{
@@ -152,7 +152,9 @@ body{
 }
 
 #cardsinnerpart .c_1{
-    background:white;
+    /* background:white; */
+    background: #CFE3DD;
+    border: 0.5px solid #cddfd9;
     color: black;
     height: 300px;
     width: 200px;

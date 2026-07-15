@@ -68,12 +68,13 @@
                         {% for t in trek %}
                         <div class="c_1">
                             <h1 style="margin-left: 30px;">{{t.trek_name}}</h1>
+                            <p style="margin-top: 10px;">Status : {{t.status}}</p>
                             <p style="margin-top: 10px;">start date : {{t.start_date}}</p>
                             <p style="margin-top: 10px;">Available slots : {{t.available_slots}}</p>
                             <p style="margin-top: 10px;">difficulty : {{t.difficulty}}</p>
                             <div style="margin-top: 10px;">
-                                <label for="desc">Description : </label>
-                                <textarea readonly id="desc", rows="7" cols="20">{{t.description}}</textarea>
+                                <label for="desc" style="text-decoration: underline;">Description : </label>
+                                <p>{{t.description}}</p>
                             </div>
                         </div>
                         {% endfor %}
