@@ -276,7 +276,7 @@ def add_trek():
                                                 Trek.end_date >= start_date
                                             ).first()
         if existing_staff:
-            flash("staff is already assigned to another trek")
+            flash(f"this staff is already assigned to {existing_staff.trek_name} with dates {existing_staff.start_date} to {existing_staff.end_date}")
             return redirect("/admin/add_trek")
         
         existing_trek = Trek.query.filter_by(trek_name=trek_name,start_date=start_date).first()
@@ -379,15 +379,15 @@ def edit_trek(trek_id):
     
         # checking conditions
         existing_staff = Trek.query.filter(
-                                                Trek.staff_id == treks.staff_id,
-                                                Trek.status == "open",
-                                                Trek.end_date >= datetime.today().date(),
-                                                Trek.id != trek_id
-                                           ).first()
+                                                Trek.staff_id == int(staff_id),
+                                                Trek.id != trek_id,              
+                                                Trek.start_date <= end_date,     
+                                                Trek.end_date >= start_date      
+                                            ).first()
         if existing_staff:
-            flash("This staff is already assigned to another open trek.")
+            flash(f"this staff is already assigned to {existing_staff.trek_name} with dates {existing_staff.start_date} to {existing_staff.end_date}")
             return redirect(f"/admin/edit_trek/{trek_id}")
-
+        
         if int(treks.duration) <= 0:
             flash("Duration must be greater than 0")
             return redirect(f"/admin/edit_trek/{trek_id}")
@@ -896,29 +896,32 @@ def trek_edit(t_id):
     # method-POST
     if request.method=="POST":
         status = request.form.get("status")
-        available_slot = request.form.get("available_slots")
+        new_total_slots = request.form.get("total_slots")
 
-        if not status or not available_slot:
+        if not status or not new_total_slots:
             flash("please fill all fields")
             return redirect(f"/staff/trek_edit/{trek.id}")
         
-        available_slot = int(available_slot)
-        if available_slot < 0 :
-            flash("available slots cannot be negative")
-            return redirect(f"/staff/trek_edit/{trek.id}")
-        if available_slot > trek.total_slots :
-            flash("available slots cannot exceede total slots")
+        new_total_slots = int(new_total_slots)
+        booked = Booking.query.filter_by(trek_id=trek.id,booking_status="booked").count()
+        if new_total_slots < trek.total_slots:
+            flash("You can only increase the total slots.")
             return redirect(f"/staff/trek_edit/{trek.id}")
         
-        booked = Booking.query.filter_by(trek_id=trek.id,booking_status="booked").count()
+        if new_total_slots < booked:
+            flash(f"At least {booked} slots are required.")
+            return redirect(f"/staff/trek_edit/{trek.id}")
+        
         if booked > 0 and status == "close":
             flash("You cannot close a trek while participants are still booked.")
             return redirect(f"/staff/trek_edit/{trek.id}")
         
         trek.status = status
-        booked = Booking.query.filter_by(trek_id=trek.id, booking_status="booked").count()
         # updating database
-        trek.available_slots = trek.total_slots - booked
+        increase = new_total_slots - trek.total_slots
+
+        trek.total_slots = new_total_slots
+        trek.available_slots += increase
         db.session.commit()
         flash("Trek updated successfully.")
         return redirect("/staff/my_treks_page")
