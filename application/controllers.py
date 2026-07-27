@@ -825,6 +825,11 @@ def staff_dashboard():
     plt.title("Trekkers on each treks")
     plt.savefig("static/images/staff_bar_1.png")
     plt.close()
+
+    trek = Trek.query.filter(
+                                Trek.staff_id == this_user.id,
+                                Trek.end_date >= datetime.today().date()
+                            ).count()
    
     return render_template("staff/staff_dashboard.html", this_user=this_user,trek=trek, total_participants=total_participants )
 
