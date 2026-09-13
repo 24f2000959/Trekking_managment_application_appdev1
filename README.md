@@ -1,4 +1,4 @@
-# 🏔️ Trekking Management Application
+# Trekking Management Application
 
 A web-based **Trekking Management Application** designed to simplify the management of trekking activities, users, treks, bookings, and related information.
 
@@ -6,9 +6,9 @@ The application provides a centralized platform where users can explore availabl
 
 ---
 
-## 📌 Features
+##  Features
 
-### 👤 User Features
+###  User Features
 
 - User registration and login
 - Browse available trekking packages
@@ -19,7 +19,7 @@ The application provides a centralized platform where users can explore availabl
 - Manage user profile
 - Track booking status
 
-### 🛠️ Admin Features
+###  Admin Features
 
 - Admin authentication
 - Add new trekking packages
@@ -32,7 +32,7 @@ The application provides a centralized platform where users can explore availabl
 
 ---
 
-## 🏔️ Trek Management
+##  Trek Management
 
 Each trek can contain information such as:
 
@@ -48,7 +48,7 @@ Each trek can contain information such as:
 
 ---
 
-## 🧑‍💻 Technology Stack
+## Technology Stack
 
 > Update this section according to the technologies actually used in your project.
 
@@ -76,7 +76,7 @@ Each trek can contain information such as:
 
 ---
 
-## 🏗️ Application Architecture
+##  Application Architecture
 
 ```text
                  ┌─────────────────────┐
